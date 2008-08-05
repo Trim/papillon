@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+ <h2>{{poll_type_name}} - {{poll_name}}</h2>
+{% if error %}<p class='error'>{{ error }}</p>{% endif %}
+ <p>{{poll_desc}}</p>
+ <form method="post" action="{{base_url}}">
+ <table class='poll'>
+ <tr>
+  <td class='simple'></td>
+  <td class='simple'></td>
+  {% for choice in choices %}<th>{{choice.name}}</th>
+ {% endfor %}</tr>
+ {% for voter in voters %}<tr>{% ifequal current_voter_id voter.id %}
+  <input type='hidden' name='voter' value='{{voter.id}}'/>
+  <td class='simple'></td>
+  <td><input type='text' name='author_name' value='{{voter.name}}'/></td>
+  {% for vote in voter.votes %}<td><input type='checkbox' name='vote_{{vote.id}}'{%ifequal vote.vote 1%} checked='checked'{%endifequal%}/></td>{%endfor%}
+  {%else%}<td class='simple'><a href='?voter={{voter.id}}'>Edit</a></td>
+  <td>{{voter.name}}</td>
+  {% for vote in voter.votes %}<td class='{%ifequal vote.vote 1%}OK{%else%}KO{%endifequal%}'>{% ifequal vote.vote 1%}Yes{%else%}No{%endifequal%}</td>
+  {%endfor%}
+  {%endifequal%}
+ </tr>{%endfor%}
+ {%if not current_voter_id%}
+ <tr>
+  <td class='simple'></td>
+  <td><input type='text' name='author_name'/></td>
+  {%for choice in choices%}<td><input type='checkbox' name='choice_{{choice.id}}'/></td>{%endfor%}
+ </tr>
+ {%endif%}
+ <tr class='sum'>
+  <td class='simple'></td><th>Sum</th>
+  {% for sum in choices_sum %}<td>{{sum}}</td>
+  {% endfor %}
+ </tr>
+ </table>
+ <input type='submit' value='{%if current_voter_id%}Edit{%else%}Participate{%endif%}'/>
+ </form>
+{% endblock %}
