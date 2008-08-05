@@ -4,7 +4,7 @@
 # This program can be distributed under the terms of the GNU GPL.
 # See the file COPYING.
 
-from random import choice
+from random import choice as random_choice
 import string
 import time
 
@@ -31,7 +31,7 @@ def createOrEdit(request, admin_url):
         chars = string.letters + string.digits
         url = ''    
         for i in range(6):
-            url += choice(chars)
+            url += random_choice(chars)
         url += str(int(time.time()))
         return url
     
