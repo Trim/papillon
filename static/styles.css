@@ -1,13 +1,22 @@
 /*
-Copyright (C) 2008  Étienne Loks  <etienne.loks_AT_peacefrogsDOTnet>
+Copyright (C) 2008 Étienne Loks  <etienne.loks_AT_peacefrogsDOTnet>
 This program can be distributed under the terms of the GNU GPL.
 See the file COPYING.
 */
 
 body{
-background-color:#ced3e1;
 margin:0;
 font-size:12px;
+background-color:#ced3e1;
+}
+
+#main{
+background-color:white;
+border:1px solid;
+margin:20px;
+background-image: url(bg.jpg);
+background-repeat:no-repeat;
+background-position:top right;
 }
 
 h1, h1 a{
@@ -30,8 +39,6 @@ font-size:24px;
 }
 
 p{
-background-color:white;
-border:1px solid black;
 padding:6px;
 margin:6px;
 width:600px;
@@ -61,18 +68,25 @@ font-size:11px;
 margin:5px;
 }
 
+#poll_table{
+overflow:auto;
+}
+
 table.poll{
 text-align:center;
 }
 
+.poll a{
+color:black;
+}
+
 .poll td{
-background-color:white;
 border:1px solid black;
 padding:0;
 }
 
 .poll th{
-background-color:white;
+background-color:#ced3e1;
 border:1px solid black;
 padding:5px;
 }
@@ -90,18 +104,16 @@ background-color:#b9b3bd;
 }
 
 td.simple{
-background-color:#ced3e1;
 border:None;
 }
 
 .sum th{
-background-color:#ced3e1;
+background-color:white;
 border:None;
 text-align:center;
 }
 
 .sum td{
-background-color:#ced3e1;
 border:None;
 font-weight:bold;
 }

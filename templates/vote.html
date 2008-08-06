@@ -4,7 +4,8 @@
  <h2>{{poll_type_name}} - {{poll_name}}</h2>
 {% if error %}<p class='error'>{{ error }}</p>{% endif %}
  <p>{{poll_desc}}</p>
- <form method="post" action="{{base_url}}">
+ <form method='post' action='{{base_url}}'>
+ <div id='poll_table'>
  <table class='poll'>
  <tr>
   <td class='simple'></td>
@@ -35,6 +36,7 @@
   {% endfor %}
  </tr>
  </table>
+ </div>
  <input type='submit' value='{%if current_voter_id%}Edit{%else%}Participate{%endif%}'/>
  </form>
 {% endblock %}
