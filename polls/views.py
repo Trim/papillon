@@ -118,19 +118,21 @@ def poll(request, poll_url):
     try:
         poll = Poll.objects.filter(base_url=poll_url)[0]
     except IndexError:
+        poll = None
+    choices = Choice.objects.filter(poll=poll).order_by('order')
+    if not choices or not poll:    
         url = "/".join(request.path.split('/')[:-3])
         url += "?bad_poll=1"
         return HttpResponseRedirect(url)
     response_dct['base_url'] = \
        "/".join(request.path.split('/')[:-2]) + '/%s/' % poll.base_url
         
-    choices = Choice.objects.filter(poll=poll).order_by('order')
     response_dct['choices'] = choices
     if 'author_name' in request.POST:
         if 'voter' in request.POST:
             try:
                 author = PollUser.objects.filter(id=int(request.POST['voter']))[0]
-            except ValueError, IndexError:
+            except (ValueError, IndexError):
                 author = None
             if author:
                 author.name = request.POST['author_name']
@@ -181,6 +183,7 @@ def poll(request, poll_url):
                     if choice not in selected_choices:
                         v = Vote(voter=author, choice=choice, vote=0)
                         v.save()
+    votes = []
     votes = Vote.objects.extra(where=['choice_id IN (%s)' \
                    % ",".join([str(choice.id) for choice in choices])])
     voters = []

@@ -72,6 +72,10 @@ margin:5px;
 overflow:auto;
 }
 
+.error{
+color:red;
+}
+
 table.poll{
 text-align:center;
 }

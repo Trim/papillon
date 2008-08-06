@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
+ {% if not new and not choices %}
+ <p class='error'>As long as no option was added to the poll, it will not be made available.</p>
+ {% endif %}
  <h2>{% if new %}New{% else %}Edit{% endif %} poll</h2>
 {% if error %}<p class='error'>{{ error }}</p>{% endif %}
  <form action="{{admin_url}}" method="post">
