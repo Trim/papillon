@@ -178,14 +178,13 @@ def poll(request, poll_url):
                         # probably been deleted
                         vote.delete()
                     else:
-                        vote.vote = 1
+                        vote.value = 1
                         vote.save()
                         selected_choices.append(vote.choice)
                 except (ValueError, IndexError):
-                    # the vote don't exist with this choice
-                    v = Vote(voter=author, choice=choice, value=1)
-                    v.save()
-            if key.startswith('choice_') and request.POST[key]:
+                    # the vote don't exist anymore
+                    pass
+            elif key.startswith('choice_') and request.POST[key]:
                 try:
                     id = int(key.split('_')[1])
                     choice = Choice.objects.filter(id=id)[0]
@@ -202,7 +201,7 @@ def poll(request, poll_url):
             if choice not in selected_choices:
                 try:
                     v = Vote.objects.filter(voter=author, choice=choice)[0]
-                    v.vote = 0
+                    v.value = 0
                 except IndexError:
                     # the vote don't exist with this choice : probably
                     # a new choice
