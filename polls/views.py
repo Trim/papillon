@@ -144,7 +144,9 @@ admin_url=admin_url, status = 'D', type=request.POST['poll_type'])
 
 
 def poll(request, poll_url):
-    "Display a poll"
+    """Display a poll
+    poll_url is given to identify the poll
+    """
     
     def modifyVote(request, choices):
         "Modify user's votes"
@@ -293,7 +295,7 @@ def poll(request, poll_url):
         voter.votes[idx] = vote
         choices_sum[idx] += vote.value
     # for undefined vote get the choice id
-    # on the template the distinction between the choice and the voter
+    # on the template the distinction between the choice and the vote
     # is made by the type of the "vote"
     for voter in voters:
         for vote in voter.votes:
