@@ -46,5 +46,5 @@ class Vote(models.Model):
     VOTE = ((-1, 'No'), 
             (0, 'Maybe'),
             (1, 'Yes'),)
-    vote = models.IntegerField(choices=VOTE)
+    value = models.IntegerField(choices=VOTE)
 
