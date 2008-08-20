@@ -1,3 +1,4 @@
+{% load i18n %}
 {% extends "base.html" %}
 
 {% block content %}
@@ -17,7 +18,7 @@
   <td class='simple'></td>
   <td><input type='text' name='author_name' value='{{voter.name}}'/></td>
   {% for vote in voter.votes %}<td><input type='checkbox' name='{%if vote.id%}vote_{{vote.id}}{%else%}choice_{{vote}}{%endif%}'{%ifequal vote.value 1%} checked='checked'{%endifequal%}/></td>{%endfor%}
-  {%else%}<td class='simple'><a href='?voter={{voter.id}}'>Edit</a></td>
+  {%else%}<td class='simple'><a href='?voter={{voter.id}}'>{% trans "Edit" %}</a></td>
   <td>{{voter.name}}</td>
   {% for vote in voter.votes %}<td class='{%ifequal vote.value 1%}OK{%else%}KO{%endifequal%}'>{% ifequal vote.value 1%}Yes{%else%}No{%endifequal%}</td>
   {%endfor%}
@@ -31,12 +32,12 @@
  </tr>
  {%endif%}
  <tr id='sum'>
-  <td class='simple'></td><th>Sum</th>
+  <td class='simple'></td><th>{% trans "Sum" %}</th>
   {% for sum in choices_sum %}<td>{{sum}}</td>
   {% endfor %}
  </tr>
  </table>
  </div>
- <input type='submit' value='{%if current_voter_id%}Edit{%else%}Participate{%endif%}'/>
+ <input type='submit' value='{%if current_voter_id%}{% trans "Edit" %}{%else%}{% trans "Participate" %}{%endif%}'/>
  </form>
 {% endblock %}

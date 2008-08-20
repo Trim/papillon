@@ -8,11 +8,17 @@
 
 <body>
 <div id="main">
+<div id="header">
+<span id='languages'>{% for language in languages%}<a href='?language={{language.0}}'>{{language.1}}</a>{% endfor %}</span>
+</div>
 <div id="top">
  <h1><a href='http://{{root_url}}'>Papillon</a></h1>
 </div>
 <div id="content">
 {% block content %}{% endblock %}
+</div>
+<div id="footer">
+<a href='http://redmine.peacefrogs.net/projects/show/papillon'>Papillon</a> - <a href='http://www.gnu.org/licenses/gpl.html'>Copyright</a> © 2008 <a href='http://redmine.peacefrogs.net/projects/show/papillon'>Papillon project</a>
 </div>
 </div>
 </body>

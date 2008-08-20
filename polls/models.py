@@ -5,6 +5,7 @@
 # See the file COPYING.
 
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 class PollUser(models.Model):
     name = models.CharField(maxlength=100)
@@ -17,19 +18,19 @@ class Poll(models.Model):
     author = models.ForeignKey(PollUser)
     base_url = models.CharField(maxlength=100)
     admin_url = models.CharField(maxlength=100)
-    STATUS = (('A', 'Available'),
-              ('D', 'Disabled'),)
+    STATUS = (('A', _('Available')),
+              ('D', _('Disabled')),)
     status = models.CharField(maxlength=1, choices=STATUS)
-    TYPE = (('M', 'Meeting'), 
-            ('P', 'Poll'),
-            ('B', 'Balanced poll'),
-            ('O', 'One choice poll'),)
+    TYPE = (('M', _('Meeting')),
+            ('P', _('Poll')),
+            ('B', _('Balanced poll')),
+            ('O', _('One choice poll')),)
     type = models.CharField(maxlength=1, choices=TYPE)
-    
+
     def getTypeLabel(self):
         idx = [type[0] for type in self.TYPE].index(self.type)
         return Poll.TYPE[idx][1]
-    
+
     class Admin:
         pass
 
@@ -43,8 +44,8 @@ class Choice(models.Model):
 class Vote(models.Model):
     voter = models.ForeignKey(PollUser)
     choice = models.ForeignKey(Choice)
-    VOTE = ((-1, 'No'), 
-            (0, 'Maybe'),
-            (1, 'Yes'),)
+    VOTE = ((-1, _('No')),
+            (0, _('Maybe')),
+            (1, _('Yes')),)
     value = models.IntegerField(choices=VOTE)
 

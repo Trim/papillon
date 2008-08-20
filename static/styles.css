@@ -11,6 +11,8 @@ background-color:#ced3e1;
 }
 
 h1, h1 a{
+margin:0;
+margin-top:2px;;
 border:1px solid black;
 border-right:None;
 border-left:None;
@@ -56,6 +58,30 @@ margin:20px;
 background-image: url(bg.jpg);
 background-repeat:no-repeat;
 background-position:top right;
+}
+
+#header{
+text-align:right;
+font-size:11px;
+color:grey;
+}
+
+#header #languages a{
+color:grey;
+padding-right:6px;
+text-decoration:none;
+}
+
+#footer{
+text-align:center;
+font-size:11px;
+color:grey;
+margin:6px;
+}
+
+#footer a{
+color:grey;
+text-decoration:none;
 }
 
 .error{

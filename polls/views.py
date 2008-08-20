@@ -4,27 +4,46 @@
 # This program can be distributed under the terms of the GNU GPL.
 # See the file COPYING.
 
+'''
+Views management
+'''
+
 from random import choice as random_choice
 import string
 import time
 
+from django.utils.translation import gettext_lazy as _
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 
+from papillon.settings import LANGUAGES
 from papillon.polls.models import Poll, PollUser, Choice, Vote
 
 def getBaseResponse(request):
-    "Get the root url in order to redirect to the main page"
-    url = "/".join([request.META['HTTP_HOST'], 
-                    request.path.split('/')[1], '']) 
-    return {'root_url':url}
+    """Manage basic fields for the template
+    If not null the second argument returned is a redirection.
+    """
+    #Get the root url in order to redirect to the main page
+    url = "/".join([request.META['HTTP_HOST'],
+                    request.path.split('/')[1], ''])
+    # setting the current language and available languages
+    if 'language' in request.GET:
+        if request.GET['language'] in [language[0] for language in LANGUAGES]:
+            request.session['django_language'] = request.GET['language']
+            return None, HttpResponseRedirect(request.path)
+    languages = []
+    for language_code, language_label in LANGUAGES:
+        languages.append((language_code, _(language_label)))
+    return {'root_url':url, 'languages':languages}, None
 
 def index(request):
     "Main page"
-    response_dct = getBaseResponse(request)
+    response_dct, redirect = getBaseResponse(request)
+    if redirect:
+        return redirect
     error = ''
     if 'bad_poll' in request.GET:
-        response_dct['error'] = "The poll requested don't exist (anymore?)"
+        response_dct['error'] = _("The poll requested don't exist (anymore?)")
     return render_to_response('main.html', response_dct)
 
 def createOrEdit(request, admin_url):
@@ -39,26 +58,26 @@ def createOrEdit(request, admin_url):
     def genRandomURL():
         "Generation of a random url"
         chars = string.letters + string.digits
-        url = ''    
+        url = ''
         for i in xrange(6):
             url += random_choice(chars)
         url += str(int(time.time()))
         return url
-    
+
     def submitNewPoll(request, response_dct):
         "A new poll is submited"
         # verify if all the mandatory_fields are set
-        mandatory_fields = (('author_name', "Author name"),
-                            ('poll_name', "Poll name"),
-                            ('poll_desc', "Poll description"),
-                            ('poll_type', "Poll type"),
+        mandatory_fields = (('author_name', _("Author name")),
+                            ('poll_name', _("Poll name")),
+                            ('poll_desc', _("Poll description")),
+                            ('poll_type', _("Poll type")),
                             )
         error = ""
         for key, label in mandatory_fields:
             if key not in request.POST or not request.POST[key]:
                 # only the first error is reported
                 if not error:
-                    error = "%s is a mandatory field" % label
+                    error = _("%s is a mandatory field") % label
             else:
                 response_dct[key] = request.POST[key]
         if error:
@@ -76,7 +95,7 @@ admin_url=admin_url, status = 'D', type=request.POST['poll_type'])
         poll.save()
         url = response_dct['admin_url'] + '/%s/' % poll.admin_url
         return response_dct, HttpResponseRedirect(url)
-    
+
     def getExistingPoll(request, response_dct, admin_url):
         "Get an existing poll"
         try:
@@ -93,7 +112,7 @@ admin_url=admin_url, status = 'D', type=request.POST['poll_type'])
           'poll_status':poll.status,
           'type_name':poll.getTypeLabel()}
         response_dct.update(new_dct)
-        
+
         # urls
         base_path = request.META['HTTP_HOST'] + \
                     "/".join(request.path.split('/')[:-3])
@@ -103,7 +122,7 @@ admin_url=admin_url, status = 'D', type=request.POST['poll_type'])
         response_dct['admin_url'] += '/%s/' % poll.admin_url
         response_dct['full_admin_url'] = base_path + "/edit/" \
                                          + admin_url + "/"
-        
+
         # if a new choice is submitted
         if 'new_choice' in request.POST and request.POST['new_choice']:
             try:
@@ -112,17 +131,19 @@ admin_url=admin_url, status = 'D', type=request.POST['poll_type'])
             except IndexError:
                 order = 0
             choice = Choice(poll=poll, name=request.POST['new_choice'],
-                            order=order) 
+                            order=order)
             choice.save()
-        # check if a choice has been choosen for deletion 
+        # check if a choice has been choosen for deletion
         for key in request.POST:
             if key.startswith('delete_') and request.POST[key]:
                 choice = Choice.objects.get(id=int(key[len('delete_'):]))
                 Vote.objects.filter(choice=choice).delete()
                 choice.delete()
         return response_dct, None
-    
-    response_dct = getBaseResponse(request)
+
+    response_dct, redirect = getBaseResponse(request)
+    if redirect:
+        return redirect
     response_dct['TYPES'] = Poll.TYPE
     response_dct['admin_url'] = \
                          "/".join(request.path.split('/')[:-2])
@@ -136,7 +157,7 @@ admin_url=admin_url, status = 'D', type=request.POST['poll_type'])
         response_dct['admin_url'] += '/0/'
     else:
         # existing poll
-        response_dct, redirection = getExistingPoll(request, 
+        response_dct, redirection = getExistingPoll(request,
                                                response_dct, admin_url)
     if redirection:
         return redirection
@@ -147,7 +168,7 @@ def poll(request, poll_url):
     """Display a poll
     poll_url is given to identify the poll
     """
-    
+
     def modifyVote(request, choices):
         "Modify user's votes"
         try:
@@ -155,7 +176,7 @@ def poll(request, poll_url):
                                   id=int(request.POST['voter']))[0]
         except (ValueError, IndexError):
             return
-        # if no author_name is given deletion of associated votes and 
+        # if no author_name is given deletion of associated votes and
         # author
         if not request.POST['author_name']:
             for choice in choices:
@@ -215,7 +236,7 @@ def poll(request, poll_url):
         author = PollUser(name=request.POST['author_name'])
         author.save()
         selected_choices = []
-        
+
         # set the selected choices
         for key in request.POST:
             if key.startswith('choice_') and request.POST[key]:
@@ -236,7 +257,9 @@ def poll(request, poll_url):
                 v = Vote(voter=author, choice=choice, value=0)
                 v.save()
 
-    response_dct = getBaseResponse(request)
+    response_dct, redirect = getBaseResponse(request)
+    if redirect:
+        return redirect
     try:
         poll = Poll.objects.filter(base_url=poll_url)[0]
     except IndexError:
@@ -244,11 +267,11 @@ def poll(request, poll_url):
     choices = Choice.objects.filter(poll=poll).order_by('order')
     # if the poll don't exist or if it has no choices the user is
     # redirected to the main page
-    if not choices or not poll:    
+    if not choices or not poll:
         url = "/".join(request.path.split('/')[:-3])
         url += "/?bad_poll=1"
         return HttpResponseRedirect(url)
-    
+
     # a vote is submitted
     if 'author_name' in request.POST:
         if 'voter' in request.POST:
@@ -256,27 +279,27 @@ def poll(request, poll_url):
             modifyVote(request, choices)
         else:
             newVote(request, choices)
-    
+
     # 'voter' is in request.GET when the edit button is pushed
     if 'voter' in request.GET:
         try:
             response_dct['current_voter_id'] = int(request.GET['voter'])
         except ValueError:
             pass
-    
+
     response_dct.update({'choices':choices,
                          'poll_type_name':poll.getTypeLabel(),
                          'poll_name':poll.name,
                          'poll_desc':poll.description})
     response_dct['base_url'] = "/".join(request.path.split('/')[:-2]) \
                                + '/%s/' % poll.base_url
-    
+
     # get voters and sum for each choice for this poll
 
     votes = [] # all votes for this poll
     votes = Vote.objects.extra(where=['choice_id IN (%s)' \
                    % ",".join([str(choice.id) for choice in choices])])
-    
+
     voters = []
     choices_sum = [0 for choice in choices]
     choices_ids = [choice.id for choice in choices]
