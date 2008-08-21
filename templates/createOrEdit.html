@@ -34,21 +34,20 @@
    <td>{% if new %}<textarea name='poll_desc'>{{poll_desc}}</textarea>{% else %}{{poll_desc}}{% endif %}</td>
    <td class='form_description'>{% trans "Precise description of the poll" %}</td>
   </tr>
-  <!--<tr>
+  <tr>
    <td><label for='poll_type'>{% trans "Poll type" %}</label></td>
    <td>{% if new %}<select name='poll_type'>
     {% for typ in TYPES %}<option value='{{typ.0}}'{% ifequal poll_type typ.0%} selected='selected'{% endifequal %}>{{typ.1}}</option>{% endfor %}
    </select>{% else %}{{type_name}}{% endif %}</td>
    <td class='form_description'>{% trans "Type of the poll:" %}
    <ul>
-    <li>{% trans "Meeting is the appropriate type to set a date for a meeting."%}</li>
+    <!--<li>{% trans "Meeting is the appropriate type to set a date for a meeting."%}</li>!-->
     <li>{% trans "Poll is the appropriate type for a simple multi-choice poll" %}</li>
     <li>{% trans "Balanced poll lets voters setting negative vote for some choices" %}</li>
-    <li>{% trans "One choice poll" %}</li>
+    <!--<li>{% trans "One choice poll" %}</li>!-->
    </ul>
    </td>
-  </tr>!-->
-  <input type='hidden' name='poll_type' value='M'/>
+  </tr>
   {% if not new %}{% if choices %}<tr>
    <th>{% trans "Choices" %}</th><th>&nbsp;</th><th>{% trans "Delete?"%}</th>
   </tr>

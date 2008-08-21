@@ -212,7 +212,13 @@ def poll(request, poll_url):
                         # probably been deleted
                         vote.delete()
                     else:
-                        vote.value = 1
+                        # try if a specific value is specified in the form
+                        # like in balanced poll
+                        try:
+                            value = int(request.POST[key])
+                        except ValueError:
+                            value = 1
+                        vote.value = value
                         vote.save()
                         selected_choices.append(vote.choice)
                 except (ValueError, IndexError):
@@ -224,7 +230,13 @@ def poll(request, poll_url):
                     choice = Choice.objects.filter(id=id)[0]
                     if choice not in choices:
                         raise ValueError
-                    v = Vote(voter=author, choice=choice, value=1)
+                    # try if a specific value is specified in the form
+                    # like in balanced poll
+                    try:
+                        value = int(request.POST[key])
+                    except ValueError:
+                        value = 1
+                    v = Vote(voter=author, choice=choice, value=value)
                     v.save()
                     selected_choices.append(choice)
                 except (ValueError, IndexError):
@@ -258,7 +270,13 @@ def poll(request, poll_url):
                     choice = Choice.objects.filter(id=id)[0]
                     if choice not in choices:
                         raise ValueError
-                    v = Vote(voter=author, choice=choice, value=1)
+                    # try if a specific value is specified in the form
+                    # like in balanced poll
+                    try:
+                        value = int(request.POST[key])
+                    except ValueError:
+                        value = 1
+                    v = Vote(voter=author, choice=choice, value=value)
                     v.save()
                     selected_choices.append(choice)
                 except (ValueError, IndexError):
@@ -302,8 +320,10 @@ def poll(request, poll_url):
 
     response_dct.update({'choices':choices,
                          'poll_type_name':poll.getTypeLabel(),
+                         'poll_type':poll.type,
                          'poll_name':poll.name,
-                         'poll_desc':poll.description})
+                         'poll_desc':poll.description,
+                         'VOTE':Vote.VOTE,})
     response_dct['base_url'] = "/".join(request.path.split('/')[:-2]) \
                                + '/%s/' % poll.base_url
 

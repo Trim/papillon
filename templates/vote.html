@@ -17,10 +17,28 @@
   <input type='hidden' name='voter' value='{{voter.id}}'/>
   <td class='simple'></td>
   <td><input type='text' name='author_name' value='{{voter.name}}'/></td>
-  {% for vote in voter.votes %}<td><input type='checkbox' name='{%if vote.id%}vote_{{vote.id}}{%else%}choice_{{vote}}{%endif%}'{%ifequal vote.value 1%} checked='checked'{%endifequal%}/></td>{%endfor%}
+  {% for vote in voter.votes %}<td>
+  {% ifequal poll_type 'P' %}
+  <input type='checkbox' name='{%if vote.id%}vote_{{vote.id}}{%else%}choice_{{vote}}{%endif%}'{%ifequal vote.value 1%} checked='checked'{%endifequal%}/>
+  {% endifequal %}
+  {% ifequal poll_type 'B' %}
+  <select name='{%if vote.id%}vote_{{vote.id}}{%else%}choice_{{vote}}{%endif%}'>
+    {% for vote_choice in VOTE %}
+    <option value='{{vote_choice.0}}'{%ifequal vote.value vote_choice.0%} selected='selected'{%endifequal%}>{{vote_choice.1}}</option>
+    {% endfor %}
+  </select>
+  {% endifequal %}
+  </td>{%endfor%}
   {%else%}<td class='simple'><a href='?voter={{voter.id}}'>{% trans "Edit" %}</a></td>
   <td>{{voter.name}}</td>
-  {% for vote in voter.votes %}<td class='{%ifequal vote.value 1%}OK{%else%}KO{%endifequal%}'>{% ifequal vote.value 1%}Yes{%else%}No{%endifequal%}</td>
+  {% for vote in voter.votes %}<td class='{%ifequal vote.value 1%}OK{%else%}{%ifequal vote.value 0%}OKO{%else%}KO{%endifequal%}{%endifequal%}'>
+  {%ifequal poll_type 'P'%}
+  {%ifequal vote.value 0%}{% trans "No" %}{%else%}{% trans "Yes" %}{%endifequal%}
+  {%else%}
+  {%for VOT in VOTE%}
+  {%ifequal VOT.0 vote.value%}{{VOT.1}}{%endifequal%}{%endfor%}
+  {%endifequal%}
+  </td>
   {%endfor%}
   {%endifequal%}
  </tr>{%endfor%}
@@ -28,7 +46,15 @@
  <tr>
   <td class='simple'></td>
   <td><input type='text' name='author_name'/></td>
-  {%for choice in choices%}<td><input type='checkbox' name='choice_{{choice.id}}'/></td>{%endfor%}
+  {%for choice in choices%}<td>
+  {% ifequal poll_type 'P' %}
+  <input type='checkbox' name='choice_{{choice.id}}'/>{% endifequal %}
+  {% ifequal poll_type 'B' %}
+  <select name='choice_{{choice.id}}'>{% for vote_choice in VOTE %}
+    <option value='{{vote_choice.0}}'{%ifequal vote_choice.0 0%} selected='selected'{%endifequal%}>{{vote_choice.1}}</option>{% endfor %}
+  </select>
+  {% endifequal %}
+  </td>{%endfor%}
  </tr>
  {%endif%}
  <tr id='sum'>

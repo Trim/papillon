@@ -38,10 +38,12 @@ class Poll(models.Model):
     STATUS = (('A', _('Available')),
               ('D', _('Disabled')),)
     status = models.CharField(maxlength=1, choices=STATUS)
-    TYPE = (('M', _('Meeting')),
+    """TYPE = (('M', _('Meeting')),
             ('P', _('Poll')),
             ('B', _('Balanced poll')),
-            ('O', _('One choice poll')),)
+            ('O', _('One choice poll')),)"""
+    TYPE = (('P', _('Poll')),
+            ('B', _('Balanced poll')),)
     type = models.CharField(maxlength=1, choices=TYPE)
 
     def getTypeLabel(self):
@@ -61,8 +63,7 @@ class Choice(models.Model):
 class Vote(models.Model):
     voter = models.ForeignKey(PollUser)
     choice = models.ForeignKey(Choice)
-    VOTE = ((-1, _('No')),
+    VOTE = ((1, _('Yes')),
             (0, _('Maybe')),
-            (1, _('Yes')),)
+            (-1, _('No')),)
     value = models.IntegerField(choices=VOTE)
-
