@@ -20,12 +20,11 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
-     (r'^admin/', include('django.contrib.admin.urls')),
+     (r'^papillon/admin/', include('django.contrib.admin.urls')),
      (r'^papillon/$', 'papillon.polls.views.index'),
      (r'^papillon/edit/(?P<admin_url>\w+)/$',
           'papillon.polls.views.createOrEdit'),
      (r'^papillon/poll/(?P<poll_url>\w+)/$', 'papillon.polls.views.poll'),
      (r'^papillon/poll/(?P<poll_url>\w+)/vote$', 'papillon.polls.views.poll'),
-     (r'^static/(?P<path>.*)$', 'django.views.static.serve',
-                                {'document_root': 'static/'}),
+     (r'^papillon/static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/var/local/django/papillon/static/'}),
 )

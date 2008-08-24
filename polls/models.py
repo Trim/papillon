@@ -65,7 +65,7 @@ class Choice(models.Model):
     poll = models.ForeignKey(Poll)
     name = models.CharField(maxlength=200)
     order = models.IntegerField()
-    limit = models.IntegerField()
+    limit = models.IntegerField(null=True)
     available = models.BooleanField(default=True)
     class Admin:
         pass

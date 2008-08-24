@@ -28,7 +28,7 @@
   {% ifequal poll_type 'B' %}
   <select name='vote_{{vote.id}}'>
     {% for vote_choice in VOTE %}
-    <option value='{{vote_choice.0}}'{%ifequal vote.value vote_choice.0%} selected='selected'{%endifequal%}>{{vote_choice.1}}</option>
+    <option value='{{vote_choice.0}}'{%ifequal vote.value vote_choice.0%} selected='selected'{%endifequal%}>{{vote_choice.1.1}}</option>
     {% endfor %}
   </select>
   {% endifequal %}
