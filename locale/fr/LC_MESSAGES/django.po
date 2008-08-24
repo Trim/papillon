@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-21 02:45+0200\n"
+"POT-Creation-Date: 2008-08-25 00:31+0200\n"
 "PO-Revision-Date: 2008-08-20 00:22+0200\n"
 "Last-Translator: Étienne Loks <etienne.loks@peacefrogs.net>,\n"
 "Language-Team: fr\n"
@@ -24,24 +24,24 @@ msgstr "Français"
 msgid "English"
 msgstr "Anglais"
 
-#: templates/vote.html:32 templates/vote.html.py:67
-#: templates/createOrEdit.html:62
+#: templates/vote.html:14
+msgid "max"
+msgstr "max"
+
+#: templates/vote.html:36 templates/vote.html.py:69
+msgid "Limit reached"
+msgstr "Limite atteinte"
+
+#: templates/vote.html:39 templates/vote.html.py:81
+#: templates/createOrEdit.html:63
 msgid "Edit"
 msgstr "Modifier"
 
-#: templates/vote.html:36 polls/models.py:68
-msgid "No"
-msgstr "Non"
-
-#: templates/vote.html:36 polls/models.py:66
-msgid "Yes"
-msgstr "Oui"
-
-#: templates/vote.html:61
+#: templates/vote.html:75
 msgid "Sum"
 msgstr "Somme"
 
-#: templates/vote.html:67
+#: templates/vote.html:81
 msgid "Participate"
 msgstr "Participer"
 
@@ -113,34 +113,71 @@ msgid "Meeting is the appropriate type to set a date for a meeting."
 msgstr "Réunion est le type adéquat pour trouver une date pour une réunion"
 
 #: templates/createOrEdit.html:45
-msgid "Poll is the appropriate type for a simple multi-choice poll"
-msgstr "Sondage est le type adéquat pour un simple sondage à choix multiple"
+#, fuzzy
+msgid "\"Poll\" is the appropriate type for a simple multi-choice poll"
+msgstr "« Sondage » est le type adéquat pour un simple sondage à choix multiple"
 
 #: templates/createOrEdit.html:46
-msgid "Balanced poll lets voters setting negative vote for some choices"
+#, fuzzy
+msgid "\"Balanced poll\" lets voters setting negative vote for some choices"
 msgstr ""
-"Sondage pondéré permet aux participants de mettre des votes négatifs pour "
+"« Sondage pondéré » permet aux participants de mettre des votes négatifs pour "
 "certains choix"
 
 #: templates/createOrEdit.html:47
-msgid "One choice poll"
-msgstr "Sondage à choix unique"
+#, fuzzy
+msgid "\"One choice poll\""
+msgstr "« Sondage à choix unique »"
 
 #: templates/createOrEdit.html:52
 msgid "Choices"
 msgstr "Choix"
 
 #: templates/createOrEdit.html:52
+#, fuzzy
+msgid "Label"
+msgstr "Libellé"
+
+#: templates/createOrEdit.html:52
+msgid "Limit"
+msgstr "Limite"
+
+#: templates/createOrEdit.html:52
 msgid "Delete?"
 msgstr "Supprimer ?"
 
-#: templates/createOrEdit.html:57
+#: templates/createOrEdit.html:55
+#, python-format
+msgid "Limited to %(choice_limit)s vote(s)"
+msgstr "Limité à %(choice_limit)s vote(s)"
+
+#: templates/createOrEdit.html:61
+msgid "Create"
+msgstr "Créer"
+
+#: templates/createOrEdit.html:71
 msgid "New choice"
 msgstr "Nouveau choix"
 
-#: templates/createOrEdit.html:60
-msgid "Create"
-msgstr "Créer"
+#: templates/createOrEdit.html:71
+msgid "Limited to"
+msgstr "Limité à"
+
+#: templates/createOrEdit.html:71
+msgid "vote(s)"
+msgstr "vote(s)"
+
+#: templates/createOrEdit.html:71
+msgid ""
+"Setting a new choice. Optionally you can set a limit of vote for this "
+"choice. This limit is usefull for limited resources allocation."
+msgstr "Ajouter un nouveau choix. Optionnellement vous pouvez ajouter "
+"une limite de vote pour ce choix. Cette limite est utile dans le cas "
+"d'attribution de ressources limitées."
+
+#: templates/createOrEdit.html:74
+msgid "Add"
+msgstr "Ajouter"
 
 #: templates/main.html:6
 msgid "Create a poll"
@@ -153,23 +190,35 @@ msgstr ""
 "Créer un nouveau sondage pour prendre une décision, trouver une date pour "
 "une réunion, etc."
 
-#: polls/models.py:38
+#: polls/models.py:40
 msgid "Available"
 msgstr "Disponible"
 
-#: polls/models.py:39
+#: polls/models.py:41
 msgid "Disabled"
 msgstr "Indisponible"
 
-#: polls/models.py:45
+#: polls/models.py:43
 msgid "Poll"
 msgstr "Sondage"
 
-#: polls/models.py:46
+#: polls/models.py:44
 msgid "Balanced poll"
 msgstr "Sondage pondéré"
 
-#: polls/models.py:67
+#: polls/models.py:45
+msgid "One choice poll"
+msgstr "Sondage à choix unique"
+
+#: polls/models.py:78
+msgid "Yes"
+msgstr "Oui"
+
+#: polls/models.py:79 polls/models.py:80
+msgid "No"
+msgstr "Non"
+
+#: polls/models.py:79
 msgid "Maybe"
 msgstr "Peut-être"
 
