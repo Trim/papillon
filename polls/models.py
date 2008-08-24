@@ -28,6 +28,7 @@ class PollUser(models.Model):
     name = models.CharField(maxlength=100)
     email = models.CharField(maxlength=100)
     password = models.CharField(maxlength=100)
+    modification_date = models.DateTimeField(auto_now=True)
 
 class Poll(models.Model):
     name = models.CharField(maxlength=200)
@@ -35,35 +36,46 @@ class Poll(models.Model):
     author = models.ForeignKey(PollUser)
     base_url = models.CharField(maxlength=100)
     admin_url = models.CharField(maxlength=100)
+    modification_date = models.DateTimeField(auto_now=True)
     STATUS = (('A', _('Available')),
               ('D', _('Disabled')),)
     status = models.CharField(maxlength=1, choices=STATUS)
-    """TYPE = (('M', _('Meeting')),
-            ('P', _('Poll')),
-            ('B', _('Balanced poll')),
-            ('O', _('One choice poll')),)"""
     TYPE = (('P', _('Poll')),
-            ('B', _('Balanced poll')),)
+            ('B', _('Balanced poll')),
+            ('O', _('One choice poll')),)
+    #        ('M', _('Meeting')),)
     type = models.CharField(maxlength=1, choices=TYPE)
 
     def getTypeLabel(self):
         idx = [type[0] for type in self.TYPE].index(self.type)
         return Poll.TYPE[idx][1]
-
     class Admin:
         pass
+    class Meta:
+        ordering = ['-modification_date']
+
+class Voter(models.Model):
+    user = models.ForeignKey(PollUser)
+    poll = models.ForeignKey(Poll)
+    creation_date = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        ordering = ['creation_date']
 
 class Choice(models.Model):
     poll = models.ForeignKey(Poll)
     name = models.CharField(maxlength=200)
     order = models.IntegerField()
+    limit = models.IntegerField()
+    available = models.BooleanField(default=True)
     class Admin:
         pass
+    class Meta:
+        ordering = ['order']
 
 class Vote(models.Model):
-    voter = models.ForeignKey(PollUser)
+    voter = models.ForeignKey(Voter)
     choice = models.ForeignKey(Choice)
-    VOTE = ((1, _('Yes')),
-            (0, _('Maybe')),
-            (-1, _('No')),)
-    value = models.IntegerField(choices=VOTE)
+    VOTE = ((1, (_('Yes'),  _('Yes'))),
+            (0, (_('No'), _('Maybe')), ),
+            (-1, (_('No'), _('No'))),)
+    value = models.IntegerField(choices=VOTE, null=True)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-20 00:40+0200\n"
+"POT-Creation-Date: 2008-08-21 02:45+0200\n"
 "PO-Revision-Date: 2008-08-20 00:22+0200\n"
 "Last-Translator: Étienne Loks <etienne.loks@peacefrogs.net>,\n"
 "Language-Team: fr\n"
@@ -24,16 +24,24 @@ msgstr "Français"
 msgid "English"
 msgstr "Anglais"
 
-#: templates/vote.html:21 templates/vote.html.py:41
-#: templates/createOrEdit.html:63
+#: templates/vote.html:32 templates/vote.html.py:67
+#: templates/createOrEdit.html:62
 msgid "Edit"
 msgstr "Modifier"
 
-#: templates/vote.html:35
+#: templates/vote.html:36 polls/models.py:68
+msgid "No"
+msgstr "Non"
+
+#: templates/vote.html:36 polls/models.py:66
+msgid "Yes"
+msgstr "Oui"
+
+#: templates/vote.html:61
 msgid "Sum"
 msgstr "Somme"
 
-#: templates/vote.html:41
+#: templates/vote.html:67
 msgid "Participate"
 msgstr "Participer"
 
@@ -68,7 +76,7 @@ msgstr "Adresse d'administration"
 msgid "Address to modify the current poll"
 msgstr "Adresse de modification de ce sondage"
 
-#: templates/createOrEdit.html:23 polls/views.py:56
+#: templates/createOrEdit.html:23 polls/views.py:83
 msgid "Author name"
 msgstr "Nom de l'auteur"
 
@@ -76,7 +84,7 @@ msgstr "Nom de l'auteur"
 msgid "Name, firstname or nickname of the author"
 msgstr "Nom, prénom ou surnom de l'auteur"
 
-#: templates/createOrEdit.html:28 polls/views.py:57
+#: templates/createOrEdit.html:28 polls/views.py:84
 msgid "Poll name"
 msgstr "Nom du sondage"
 
@@ -84,7 +92,7 @@ msgstr "Nom du sondage"
 msgid "Global name to present the poll"
 msgstr "Nom général pour présenter le sondage"
 
-#: templates/createOrEdit.html:33 polls/views.py:58
+#: templates/createOrEdit.html:33 polls/views.py:85
 msgid "Poll description"
 msgstr "Description du sondage"
 
@@ -92,7 +100,7 @@ msgstr "Description du sondage"
 msgid "Precise description of the poll"
 msgstr "Description précise du sondage"
 
-#: templates/createOrEdit.html:38 polls/views.py:59
+#: templates/createOrEdit.html:38 polls/views.py:86
 msgid "Poll type"
 msgstr "Type du sondage"
 
@@ -114,23 +122,23 @@ msgstr ""
 "Sondage pondéré permet aux participants de mettre des votes négatifs pour "
 "certains choix"
 
-#: templates/createOrEdit.html:47 polls/models.py:27
+#: templates/createOrEdit.html:47
 msgid "One choice poll"
 msgstr "Sondage à choix unique"
 
-#: templates/createOrEdit.html:53
+#: templates/createOrEdit.html:52
 msgid "Choices"
 msgstr "Choix"
 
-#: templates/createOrEdit.html:53
+#: templates/createOrEdit.html:52
 msgid "Delete?"
 msgstr "Supprimer ?"
 
-#: templates/createOrEdit.html:58
+#: templates/createOrEdit.html:57
 msgid "New choice"
 msgstr "Nouveau choix"
 
-#: templates/createOrEdit.html:61
+#: templates/createOrEdit.html:60
 msgid "Create"
 msgstr "Créer"
 
@@ -145,44 +153,34 @@ msgstr ""
 "Créer un nouveau sondage pour prendre une décision, trouver une date pour "
 "une réunion, etc."
 
-#: polls/models.py:21
+#: polls/models.py:38
 msgid "Available"
 msgstr "Disponible"
 
-#: polls/models.py:22
+#: polls/models.py:39
 msgid "Disabled"
 msgstr "Indisponible"
 
-#: polls/models.py:24
-msgid "Meeting"
-msgstr "Réunion"
-
-#: polls/models.py:25
+#: polls/models.py:45
 msgid "Poll"
 msgstr "Sondage"
 
-#: polls/models.py:26
+#: polls/models.py:46
 msgid "Balanced poll"
 msgstr "Sondage pondéré"
 
-#: polls/models.py:47
-msgid "No"
-msgstr "Non"
-
-#: polls/models.py:48
+#: polls/models.py:67
 msgid "Maybe"
 msgstr "Peut-être"
 
-#: polls/models.py:49
-msgid "Yes"
-msgstr "Oui"
-
-#: polls/views.py:32
+#: polls/views.py:59
 msgid "The poll requested don't exist (anymore?)"
 msgstr "Le sondage que vous avez demandé n'existe pas (n'existe plus ?)"
 
-#: polls/views.py:66
+#: polls/views.py:93
 #, python-format
 msgid "%s is a mandatory field"
 msgstr "%s est un champs obligatoire"
 
+#~ msgid "Meeting"
+#~ msgstr "Réunion"

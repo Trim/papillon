@@ -30,7 +30,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 
 from papillon.settings import LANGUAGES
-from papillon.polls.models import Poll, PollUser, Choice, Vote
+from papillon.polls.models import Poll, PollUser, Choice, Voter, Vote
 
 def getBaseResponse(request):
     """Manage basic fields for the template
@@ -109,7 +109,7 @@ admin_url=admin_url, status = 'D', type=request.POST['poll_type'])
         url = response_dct['admin_url'] + '/%s/' % poll.admin_url
         return response_dct, HttpResponseRedirect(url)
 
-    def getExistingPoll(request, response_dct, admin_url):
+    def getAndUpdateExistingPoll(request, response_dct, admin_url):
         "Get an existing poll"
         try:
             poll = Poll.objects.filter(admin_url=admin_url)[0]
@@ -117,6 +117,16 @@ admin_url=admin_url, status = 'D', type=request.POST['poll_type'])
             # if the poll don't exist redirect to the creation page
             url = response_dct['admin_url'] + '/0/'
             return response_dct, HttpResponseRedirect(url)
+        # update the poll
+        updated = None
+        if 'poll_name' in request.POST and request.POST['poll_name']:
+            updated = True
+            poll.name = request.POST['poll_name']
+        if 'poll_desc' in request.POST and request.POST['poll_desc']:
+            updated = True
+            poll.description = request.POST['poll_desc']
+        if updated:
+            poll.save()
         # base feed of the template
         new_dct = {'author_name':poll.author.name,
           'poll_name':poll.name,
@@ -143,8 +153,15 @@ admin_url=admin_url, status = 'D', type=request.POST['poll_type'])
                 order += 1
             except IndexError:
                 order = 0
+            limit = None
+            if 'limit' in request.POST:
+                try:
+                    limit = int(request.POST['limit'])
+                except ValueError:
+                    # non numeric limit given : no limit set
+                    pass
             choice = Choice(poll=poll, name=request.POST['new_choice'],
-                            order=order)
+                            order=order, limit=limit)
             choice.save()
         # check if a choice has been choosen for deletion
         for key in request.POST:
@@ -170,7 +187,7 @@ admin_url=admin_url, status = 'D', type=request.POST['poll_type'])
         response_dct['admin_url'] += '/0/'
     else:
         # existing poll
-        response_dct, redirection = getExistingPoll(request,
+        response_dct, redirection = getAndUpdateExistingPoll(request,
                                                response_dct, admin_url)
     if redirection:
         return redirection
@@ -185,24 +202,51 @@ def poll(request, poll_url):
     def modifyVote(request, choices):
         "Modify user's votes"
         try:
-            author = PollUser.objects.filter(
+            voter = Voter.objects.filter(
                                   id=int(request.POST['voter']))[0]
         except (ValueError, IndexError):
             return
         # if no author_name is given deletion of associated votes and
         # author
         if not request.POST['author_name']:
+            # verify if the author can be deleted
+            delete_user = None
+            if not voter.user.password:
+                v = Voter.objects.filter(user=voter.user)
+                if len(v) == 1 and v[0] == voter:
+                    delete_user = voter.user
             for choice in choices:
-                v = Vote.objects.filter(voter=author, choice=choice)
+                v = Vote.objects.filter(voter=voter, choice=choice)
                 v.delete()
-            author.delete()
+            voter.delete()
+            if delete_user:
+                delete_user.delete()
             return
         # update the name
-        author.name = request.POST['author_name']
-        author.save()
+        voter.user.name = request.POST['author_name']
+        voter.user.save()
+        # update the modification date
+        voter.save()
         selected_choices = []
         # set the selected choices
         for key in request.POST:
+            # modify a one choice poll
+            if key == 'vote' and request.POST[key]:
+                try:
+                    id = int(request.POST[key])
+                    vote = Vote.objects.filter(id=id)[0]
+                    if vote.choice not in choices:
+                        # bad vote id : the associated choice has
+                        # probably been deleted
+                        vote.delete()
+                    else:
+                        vote.value = 1
+                        vote.save()
+                        selected_choices.append(vote.choice)
+                except (ValueError, IndexError):
+                    # the vote don't exist anymore
+                    pass
+            # modify an existing vote
             if key.startswith('vote_') and request.POST[key]:
                 try:
                     id = int(key.split('_')[1])
@@ -224,34 +268,16 @@ def poll(request, poll_url):
                 except (ValueError, IndexError):
                     # the vote don't exist anymore
                     pass
-            elif key.startswith('choice_') and request.POST[key]:
-                try:
-                    id = int(key.split('_')[1])
-                    choice = Choice.objects.filter(id=id)[0]
-                    if choice not in choices:
-                        raise ValueError
-                    # try if a specific value is specified in the form
-                    # like in balanced poll
-                    try:
-                        value = int(request.POST[key])
-                    except ValueError:
-                        value = 1
-                    v = Vote(voter=author, choice=choice, value=value)
-                    v.save()
-                    selected_choices.append(choice)
-                except (ValueError, IndexError):
-                    # bad choice id : the choice has probably been deleted
-                    pass
         # update non selected choices
         for choice in choices:
             if choice not in selected_choices:
                 try:
-                    v = Vote.objects.filter(voter=author, choice=choice)[0]
+                    v = Vote.objects.filter(voter=voter, choice=choice)[0]
                     v.value = 0
                 except IndexError:
                     # the vote don't exist with this choice : probably
                     # a new choice
-                    v = Vote(voter=author, choice=choice, value=0)
+                    v = Vote(voter=voter, choice=choice, value=0)
                 v.save()
 
     def newVote(request, choices):
@@ -260,10 +286,13 @@ def poll(request, poll_url):
             return
         author = PollUser(name=request.POST['author_name'])
         author.save()
+        voter = Voter(user=author, poll=poll)
+        voter.save()
         selected_choices = []
 
         # set the selected choices
         for key in request.POST:
+            # standard vote
             if key.startswith('choice_') and request.POST[key]:
                 try:
                     id = int(key.split('_')[1])
@@ -276,7 +305,20 @@ def poll(request, poll_url):
                         value = int(request.POST[key])
                     except ValueError:
                         value = 1
-                    v = Vote(voter=author, choice=choice, value=value)
+                    v = Vote(voter=voter, choice=choice, value=value)
+                    v.save()
+                    selected_choices.append(choice)
+                except (ValueError, IndexError):
+                    # bad choice id : the choice has probably been deleted
+                    pass
+            # one choice vote
+            if key == 'choice' and request.POST[key]:
+                try:
+                    id = int(request.POST[key])
+                    choice = Choice.objects.filter(id=id)[0]
+                    if choice not in choices:
+                        raise ValueError
+                    v = Vote(voter=voter, choice=choice, value=1)
                     v.save()
                     selected_choices.append(choice)
                 except (ValueError, IndexError):
@@ -285,7 +327,7 @@ def poll(request, poll_url):
         # set non selected choices
         for choice in choices:
             if choice not in selected_choices:
-                v = Vote(voter=author, choice=choice, value=0)
+                v = Vote(voter=voter, choice=choice, value=0)
                 v.save()
 
     response_dct, redirect = getBaseResponse(request)
@@ -295,7 +337,7 @@ def poll(request, poll_url):
         poll = Poll.objects.filter(base_url=poll_url)[0]
     except IndexError:
         poll = None
-    choices = Choice.objects.filter(poll=poll).order_by('order')
+    choices = list(Choice.objects.filter(poll=poll))
     # if the poll don't exist or if it has no choices the user is
     # redirected to the main page
     if not choices or not poll:
@@ -310,6 +352,8 @@ def poll(request, poll_url):
             modifyVote(request, choices)
         else:
             newVote(request, choices)
+        # update the modification date of the poll
+        poll.save()
 
     # 'voter' is in request.GET when the edit button is pushed
     if 'voter' in request.GET:
@@ -318,8 +362,7 @@ def poll(request, poll_url):
         except ValueError:
             pass
 
-    response_dct.update({'choices':choices,
-                         'poll_type_name':poll.getTypeLabel(),
+    response_dct.update({'poll_type_name':poll.getTypeLabel(),
                          'poll_type':poll.type,
                          'poll_name':poll.name,
                          'poll_desc':poll.description,
@@ -328,37 +371,42 @@ def poll(request, poll_url):
                                + '/%s/' % poll.base_url
 
     # get voters and sum for each choice for this poll
-
-    votes = [] # all votes for this poll
-    votes = Vote.objects.extra(where=['choice_id IN (%s)' \
-                   % ",".join([str(choice.id) for choice in choices])])
-
-    voters = []
-    choices_sum = [0 for choice in choices]
-    choices_ids = [choice.id for choice in choices]
-    for vote in votes:
-        if vote.voter not in voters:
-            # initialize a votes list for the current voter
-            vote.voter.votes = [None for choice in choices]
-            voters.append(vote.voter)
-            voter = vote.voter
-        else:
-            # get the appropriate voter
-            voter = voters[voters.index(vote.voter)]
-        idx = choices_ids.index(vote.choice.id)
-        # associate vote in the votes list of the voter
-        voter.votes[idx] = vote
-        choices_sum[idx] += vote.value
-    # for undefined vote get the choice id
-    # on the template the distinction between the choice and the vote
-    # is made by the type of the "vote"
+    voters = Voter.objects.filter(poll=poll)
+    for choice in choices:
+        choice.sum = 0
+    choice_ids = [choice.id for choice in choices]
     for voter in voters:
+        query = Vote.objects.filter(voter=voter)
+        query = query.extra(where=['choice_id IN (%s)' \
+                            % ",".join([str(choice.id) for choice in choices])])
+        voter.votes = list(query.order_by('choice'))
         for vote in voter.votes:
-            if not vote:
-                idx = voter.votes.index(vote)
-                voter.votes[idx] = choices[idx].id
-    response_dct.update({'voters':voters,
-                        'voter':voters,
-                        'choices_sum':[str(sum) for sum in choices_sum]
-                        })
+            if vote.choice.id in choice_ids:
+                if vote.value:
+                    choices[choice_ids.index(vote.choice.id)].sum += vote.value
+            else:
+                # the choice is probably not available anymore
+                voter.votes.remove(vote)
+                vote.delete()
+        # initialize undefined vote
+        choice_vote_ids = [vote.choice.id for vote in voter.votes]
+        for choice in choices:
+            if choice.id not in choice_vote_ids:
+                vote = Vote(voter=voter, choice=choice, value=None)
+                vote.save()
+                idx = choices.index(choice)
+                voter.votes.insert(idx, vote)
+
+    # set non-available choices if the limit is reached for a choice
+    response_dct['limit_set'] = None
+    for choice in choices:
+        if choice.limit:
+           response_dct['limit_set'] = True
+        if choice.limit and choice.sum >= choice.limit:
+            choice.available = False
+        else:
+            choice.available = True
+        choice.save()
+    response_dct['voters'] = voters
+    response_dct['choices'] = choices
     return render_to_response('vote.html', response_dct)
