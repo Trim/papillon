@@ -25,26 +25,26 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 class PollUser(models.Model):
-    name = models.CharField(maxlength=100)
-    email = models.CharField(maxlength=100)
-    password = models.CharField(maxlength=100)
+    name = models.CharField(max_length=100)
+    email = models.CharField(max_length=100)
+    password = models.CharField(max_length=100)
     modification_date = models.DateTimeField(auto_now=True)
 
 class Poll(models.Model):
-    name = models.CharField(maxlength=200)
-    description = models.CharField(maxlength=1000)
+    name = models.CharField(max_length=200)
+    description = models.CharField(max_length=1000)
     author = models.ForeignKey(PollUser)
-    base_url = models.CharField(maxlength=100)
-    admin_url = models.CharField(maxlength=100)
+    base_url = models.CharField(max_length=100)
+    admin_url = models.CharField(max_length=100)
     modification_date = models.DateTimeField(auto_now=True)
     STATUS = (('A', _('Available')),
               ('D', _('Disabled')),)
-    status = models.CharField(maxlength=1, choices=STATUS)
+    status = models.CharField(max_length=1, choices=STATUS)
     TYPE = (('P', _('Poll')),
             ('B', _('Balanced poll')),
             ('O', _('One choice poll')),)
     #        ('M', _('Meeting')),)
-    type = models.CharField(maxlength=1, choices=TYPE)
+    type = models.CharField(max_length=1, choices=TYPE)
 
     def getTypeLabel(self):
         idx = [type[0] for type in self.TYPE].index(self.type)
@@ -63,7 +63,7 @@ class Voter(models.Model):
 
 class Choice(models.Model):
     poll = models.ForeignKey(Poll)
-    name = models.CharField(maxlength=200)
+    name = models.CharField(max_length=200)
     order = models.IntegerField()
     limit = models.IntegerField(null=True)
     available = models.BooleanField(default=True)
