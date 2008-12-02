@@ -20,6 +20,7 @@ See the file COPYING for details.
 body{
 margin:0;
 font-size:12px;
+font-family:arial;
 background-color:#ced3e1;
 }
 
@@ -42,6 +43,10 @@ border-bottom:1px dashed black;
 text-decoration:None;
 margin:10px;
 font-size:24px;
+}
+
+h2 a:hover{
+color:grey;
 }
 
 p{

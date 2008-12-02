@@ -46,7 +46,7 @@ def getBaseResponse(request):
             return None, HttpResponseRedirect(request.path)
     languages = []
     for language_code, language_label in LANGUAGES:
-        languages.append((language_code, _(language_label)))
+        languages.append((language_code, language_label))
     return {'root_url':url, 'languages':languages}, None
 
 def index(request):
@@ -163,12 +163,16 @@ admin_url=admin_url, status = 'D', type=request.POST['poll_type'])
             choice = Choice(poll=poll, name=request.POST['new_choice'],
                             order=order, limit=limit)
             choice.save()
-        # check if a choice has been choosen for deletion
+        # check if a choice has been choosen for deletion or for modification
         for key in request.POST:
             if key.startswith('delete_') and request.POST[key]:
                 choice = Choice.objects.get(id=int(key[len('delete_'):]))
                 Vote.objects.filter(choice=choice).delete()
                 choice.delete()
+            if key.startswith('modify_') and request.POST[key]:
+                choice = Choice.objects.get(id=int(key[len('modify_'):]))
+                choice.name = request.POST[key]
+                choice.save()
         return response_dct, None
 
     response_dct, redirect = getBaseResponse(request)

@@ -26,6 +26,6 @@ urlpatterns = patterns('',
           'papillon.polls.views.createOrEdit'),
      (r'^papillon/poll/(?P<poll_url>\w+)/$', 'papillon.polls.views.poll'),
      (r'^papillon/poll/(?P<poll_url>\w+)/vote$', 'papillon.polls.views.poll'),
-     (r'^static/(?P<path>.*)$', 'django.views.static.serve',
+     (r'^papillon/static/(?P<path>.*)$', 'django.views.static.serve',
                                 {'document_root': 'static/'}),
 )

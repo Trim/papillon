@@ -52,7 +52,7 @@
    <th>{% trans "Choices" %}</th><th>{% trans "Label" %}</th><th>{% trans "Limit" %}</th><th>{% trans "Delete?"%}</th>
   </tr>
   {% for choice in choices %}<tr>
-   <td>&nbsp;</td><td>{{choice.name}}</td><td>{%if choice.limit%}{% blocktrans with choice.limit as choice_limit%}Limited to {{choice_limit}} vote(s){% endblocktrans %}{%endif%}</td><td><input type='checkbox' name='delete_{{choice.id}}'/></td>
+   <td>&nbsp;</td><td><input type='text' name='modify_{{choice.id}}' value="{{choice.name}}"/></td><td>{%if choice.limit%}{% blocktrans with choice.limit as choice_limit%}Limited to {{choice_limit}} vote(s){% endblocktrans %}{%endif%}</td><td><input type='checkbox' name='delete_{{choice.id}}'/></td>
   </tr>
   {% endfor %}{% endif %}
   <tr>

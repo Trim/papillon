@@ -65,7 +65,7 @@ class Choice(models.Model):
     poll = models.ForeignKey(Poll)
     name = models.CharField(max_length=200)
     order = models.IntegerField()
-    limit = models.IntegerField(null=True)
+    limit = models.IntegerField(null=True, blank=True)
     available = models.BooleanField(default=True)
     class Admin:
         pass
@@ -78,4 +78,4 @@ class Vote(models.Model):
     VOTE = ((1, (_('Yes'),  _('Yes'))),
             (0, (_('No'), _('Maybe')), ),
             (-1, (_('No'), _('No'))),)
-    value = models.IntegerField(choices=VOTE, null=True)
+    value = models.IntegerField(choices=VOTE, blank=True)
