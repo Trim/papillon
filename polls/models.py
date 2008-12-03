@@ -53,13 +53,18 @@ class Poll(models.Model):
         pass
     class Meta:
         ordering = ['-modification_date']
+    def __unicode__(self):
+        return self.name
 
 class Voter(models.Model):
     user = models.ForeignKey(PollUser)
     poll = models.ForeignKey(Poll)
     creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
     class Meta:
         ordering = ['creation_date']
+    def __unicode__(self):
+        return _("Vote from %(user)s") % {'user':self.user.name}
 
 class Choice(models.Model):
     poll = models.ForeignKey(Poll)

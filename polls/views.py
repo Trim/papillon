@@ -24,6 +24,7 @@ Views management
 from random import choice as random_choice
 import string
 import time
+from datetime import datetime
 
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import render_to_response
@@ -200,7 +201,9 @@ admin_url=admin_url, status = 'D', type=request.POST['poll_type'])
 
 def poll(request, poll_url):
     """Display a poll
-    poll_url is given to identify the poll
+    poll_url is given to identify the poll. If '_' is in the poll_url the second
+    part of the url is the unix time given to highlight a particular vote
+    modification
     """
 
     def modifyVote(request, choices):
@@ -337,6 +340,15 @@ def poll(request, poll_url):
     response_dct, redirect = getBaseResponse(request)
     if redirect:
         return redirect
+    highlight_vote_date = None
+    if '_' in poll_url:
+        url_spl = poll_url.split('_')
+        if len(url_spl) == 2:
+            poll_url, highlight_vote_date = url_spl
+            try:
+                highlight_vote_date = int(highlight_vote_date)
+            except ValueError:
+                highlight_vote_date = None
     try:
         poll = Poll.objects.filter(base_url=poll_url)[0]
     except IndexError:
@@ -370,6 +382,7 @@ def poll(request, poll_url):
                          'poll_type':poll.type,
                          'poll_name':poll.name,
                          'poll_desc':poll.description,
+                         'poll_base_url':poll.base_url,
                          'VOTE':Vote.VOTE,})
     response_dct['base_url'] = "/".join(request.path.split('/')[:-2]) \
                                + '/%s/' % poll.base_url
@@ -380,6 +393,10 @@ def poll(request, poll_url):
         choice.sum = 0
     choice_ids = [choice.id for choice in choices]
     for voter in voters:
+        # highlight a voter
+        if time.mktime(voter.modification_date.timetuple()) \
+                                                         == highlight_vote_date:
+            voter.highlight = True
         query = Vote.objects.filter(voter=voter)
         query = query.extra(where=['choice_id IN (%s)' \
                             % ",".join([str(choice.id) for choice in choices])])

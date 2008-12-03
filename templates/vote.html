@@ -13,7 +13,8 @@
   <td class='simple'></td>
   {% for choice in choices %}<th>{{choice.name}}{% if choice.limit %} ({% trans "max" %} {{choice.limit}}){%endif%}</th>
  {% endfor %}</tr>
- {% for voter in voters %}<tr>{% ifequal current_voter_id voter.id %}
+ {% for voter in voters %}<tr{% if voter.highlight %} class='highlighted_voter'{% endif %}>
+ {% ifequal current_voter_id voter.id %}
   <input type='hidden' name='voter' value='{{voter.id}}'/>
   <td class='simple'></td>
   <td><input type='text' name='author_name' value='{{voter.user.name}}'/></td>
@@ -77,7 +78,11 @@
   {% endfor %}
  </tr>
  </table>
- </div>
  <input type='submit' value='{%if current_voter_id%}{% trans "Edit" %}{%else%}{% trans "Participate" %}{%endif%}'/>
+ </div>
+ <hr class='spacer'/>
  </form>
+ <div id='syndication'>
+  {% trans "Remain informed of poll evolution:" %} <a href="/papillon/feeds/poll/{{poll_base_url}}/">{%trans "Syndication"%}</a>
+ </div>
 {% endblock %}

@@ -69,6 +69,12 @@ label{
 font-weight:bold;
 }
 
+hr.spacer{
+clear:both;
+height:0;
+border:0;
+}
+
 #main{
 background-color:white;
 border:1px solid;
@@ -132,6 +138,9 @@ margin:5px;
 
 #poll_table{
 overflow:auto;
+text-align:center;
+display:block;
+float:left;
 }
 
 #poll{
@@ -149,6 +158,7 @@ padding:0;
 
 #poll td.simple{
 border:None;
+background-color:#FFF;
 }
 
 #poll th{
@@ -182,4 +192,13 @@ text-align:center;
 #sum td{
 border:None;
 font-weight:bold;
+}
+
+tr.highlighted_voter td{
+background-color:grey;
+color:white;
+}
+
+#syndication{
+padding:10px;
 }
