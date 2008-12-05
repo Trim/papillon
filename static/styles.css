@@ -24,6 +24,10 @@ font-family:arial;
 background-color:#ced3e1;
 }
 
+a{
+color:#6f819d;
+}
+
 h1, h1 a{
 margin:0;
 margin-top:2px;;
@@ -46,6 +50,17 @@ font-size:24px;
 }
 
 h2 a:hover{
+color:grey;
+}
+
+h3, h3 a{
+color:black;
+text-decoration:None;
+margin:10px;
+font-size:20px;
+}
+
+h3 a:hover{
 color:grey;
 }
 

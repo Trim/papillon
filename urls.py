@@ -18,18 +18,22 @@
 # See the file COPYING for details.
 
 from django.conf.urls.defaults import *
+from django.contrib import admin
+admin.autodiscover()
+
 from polls.feeds import PollLatestEntries
 
 feeds = {
     'poll': PollLatestEntries,
 }
 
-
 urlpatterns = patterns('',
-     (r'^papillon/admin/', include('django.contrib.admin.urls')),
+     (r'^papillon/admin/(.*)', admin.site.root),
      (r'^papillon/$', 'papillon.polls.views.index'),
      (r'^papillon/edit/(?P<admin_url>\w+)/$',
-          'papillon.polls.views.createOrEdit'),
+            'papillon.polls.views.createOrEdit'),
+     (r'^papillon/category/(?P<category_id>\w+)/$',
+            'papillon.polls.views.category'),
      (r'^papillon/poll/(?P<poll_url>\w+)/$', 'papillon.polls.views.poll'),
      (r'^papillon/poll/(?P<poll_url>\w+)/vote$', 'papillon.polls.views.poll'),
      (r'^papillon/feeds/(?P<url>.*)$',

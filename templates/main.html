@@ -3,7 +3,17 @@
 
 {% block content %}
 {% if error %}<p class='error'>{{error}}</p>{%endif%}
-<h2><a href='edit/0'>{% trans "Create a poll" %}</a></h2>
+<h2><a href='edit/0'>{%trans "Create a poll"%}</a></h2>
 <p>{% trans "Create a new sondage for take a decision, find a date for a meeting, etc." %}</p>
+
+{% if polls %}<h2>{%trans "Polls"%}</h2>{%endif%}
+{% for poll in polls %}
+<p><a href='poll/{{poll.base_url}}'>{{poll.name}}</a> {{poll.description}}</p>
+{% endfor %}
+
+{% if categories %}<h2>{%trans "Categories"%}</h2>{% endif %}
+{% for category in categories %}
+<h3><a href='category/{{category.id}}'>{{category.name}}</a></h3>
+{% endfor %}
 
 {% endblock %}

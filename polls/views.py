@@ -31,7 +31,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 
 from papillon.settings import LANGUAGES
-from papillon.polls.models import Poll, PollUser, Choice, Voter, Vote
+from papillon.polls.models import Poll, PollUser, Choice, Voter, Vote, Category
 
 def getBaseResponse(request):
     """Manage basic fields for the template
@@ -55,10 +55,22 @@ def index(request):
     response_dct, redirect = getBaseResponse(request)
     if redirect:
         return redirect
+    response_dct['polls'] = Poll.objects.filter(public=True, category=None)
+    response_dct['categories'] = Category.objects.all()
     error = ''
     if 'bad_poll' in request.GET:
         response_dct['error'] = _("The poll requested don't exist (anymore?)")
     return render_to_response('main.html', response_dct)
+
+def category(request, category_id):
+    "Page for a category"
+    response_dct, redirect = getBaseResponse(request)
+    if redirect:
+        return redirect
+    category = Category.objects.get(id=int(category_id))
+    response_dct['category'] = category
+    response_dct['polls'] = Poll.objects.filter(public=True, category=category)
+    return render_to_response('category.html', response_dct)
 
 def createOrEdit(request, admin_url):
     '''Creation or edition of a poll.
@@ -103,9 +115,19 @@ def createOrEdit(request, admin_url):
         author.save()
         base_url = 'b' + genRandomURL()
         admin_url = 'a' + genRandomURL()
+        category = None
+        if 'poll_category' in request.POST and request.POST['poll_category']:
+            category = Category.objects.get(id=int(request.POST['poll_category']))
+        public = False
+        if 'poll_public' in request.POST and request.POST['poll_public']:
+            value = False
+            if request.POST['poll_public'] == '1':
+                value = True
+            public = value
         poll = Poll(name=request.POST['poll_name'],
 description=request.POST['poll_desc'], author=author, base_url=base_url,
-admin_url=admin_url, status = 'D', type=request.POST['poll_type'])
+admin_url=admin_url, type=request.POST['poll_type'], category=category,
+public=public)
         poll.save()
         url = response_dct['admin_url'] + '/%s/' % poll.admin_url
         return response_dct, HttpResponseRedirect(url)
@@ -126,14 +148,23 @@ admin_url=admin_url, status = 'D', type=request.POST['poll_type'])
         if 'poll_desc' in request.POST and request.POST['poll_desc']:
             updated = True
             poll.description = request.POST['poll_desc']
+        if 'poll_open' in request.POST and request.POST['poll_open']:
+            updated = True
+            value = False
+            if request.POST['poll_open'] == '1':
+                value = True
+            poll.open = value
+        if 'poll_public' in request.POST and request.POST['poll_public']:
+            updated = True
+            value = False
+            if request.POST['poll_public'] == '1':
+                value = True
+            poll.public = value
         if updated:
             poll.save()
         # base feed of the template
-        new_dct = {'author_name':poll.author.name,
-          'poll_name':poll.name,
-          'poll_desc':poll.description,
+        new_dct = {'poll':poll,
           'choices':Choice.objects.filter(poll=poll).order_by('order'),
-          'poll_status':poll.status,
           'type_name':poll.getTypeLabel()}
         response_dct.update(new_dct)
 
@@ -180,6 +211,7 @@ admin_url=admin_url, status = 'D', type=request.POST['poll_type'])
     if redirect:
         return redirect
     response_dct['TYPES'] = Poll.TYPE
+    response_dct['categories'] = Category.objects.all()
     response_dct['admin_url'] = \
                          "/".join(request.path.split('/')[:-2])
     redirection = None

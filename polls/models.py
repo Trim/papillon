@@ -24,6 +24,12 @@ Models management
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    def __unicode__(self):
+        return self.name
+
 class PollUser(models.Model):
     name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
@@ -34,12 +40,13 @@ class Poll(models.Model):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=1000)
     author = models.ForeignKey(PollUser)
+    category = models.ForeignKey(Category, null=True, blank=True)
+    enddate = models.DateTimeField(null=True, blank=True)
     base_url = models.CharField(max_length=100)
     admin_url = models.CharField(max_length=100)
     modification_date = models.DateTimeField(auto_now=True)
-    STATUS = (('A', _('Available')),
-              ('D', _('Disabled')),)
-    status = models.CharField(max_length=1, choices=STATUS)
+    public = models.BooleanField(default=False)
+    open = models.BooleanField(default=True)
     TYPE = (('P', _('Poll')),
             ('B', _('Balanced poll')),
             ('O', _('One choice poll')),)

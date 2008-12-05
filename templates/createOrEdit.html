@@ -9,6 +9,7 @@
 {% if error %}<p class='error'>{{ error }}</p>{% endif %}
 <table id='new_poll'>
 <form action="{{admin_url}}" method="post">
+
   {% if not new %}<tr>
    <td><label>{% trans "Poll url" %}</label></td>
    <td colspan='2'><a href='http://{{full_base_url}}'>http://{{full_base_url}}</a></td>
@@ -19,21 +20,59 @@
    <td colspan='2'><a href='http://{{full_admin_url}}'>http://{{full_admin_url}}</a></td>
    <td class='form_description'>{% trans "Address to modify the current poll" %}</td>
   </tr>
-  {% endif %}<tr>
+  {% endif %}
+
+  <tr>
    <td><label for='author_name'>{% trans "Author name" %}</label></td>
-   <td colspan='2'>{% if new %}<input type='text' name='author_name' value='{{author_name}}'/>{% else %}{{author_name}}{% endif %}</td>
+   <td colspan='2'>{% if new %}<input type='text' name='author_name' value='{{poll.author.name}}'/>{% else %}{{poll.author.name}}{% endif %}</td>
    <td class='form_description'>{% trans "Name, firstname or nickname of the author" %}</td>
   </tr>
+
   <tr>
    <td><label for='poll_name'>{% trans "Poll name" %}</label></td>
-   <td colspan='2'>{% if new %}<input type='text' name='poll_name' value='{{poll_name}}'/>{% else %}<input type='text' name='poll_name' value='{{poll_name}}'/>{% endif %}</td>
+   <td colspan='2'>{% if new %}<input type='text' name='poll_name' value='{{poll.name}}'/>{% else %}<input type='text' name='poll_name' value='{{poll.name}}'/>{% endif %}</td>
    <td class='form_description'>{% trans "Global name to present the poll" %}</td>
   </tr>
+
   <tr>
    <td><label for='poll_desc'>{% trans "Poll description" %}</label></td>
-   <td colspan='2'>{% if new %}<textarea name='poll_desc'>{{poll_desc}}</textarea>{% else %}<textarea name='poll_desc'>{{poll_desc}}</textarea>{% endif %}</td>
+   <td colspan='2'>{% if new %}<textarea name='poll_desc'>{{poll.description}}</textarea>{% else %}<textarea name='poll_desc'>{{poll.description}}</textarea>{% endif %}</td>
    <td class='form_description'>{% trans "Precise description of the poll" %}</td>
   </tr>
+
+  {% if not new %}<tr>
+   <td><label for='poll_open'>{% trans "Poll status" %}</label></td>
+   <td colspan='2'>
+    <select name='poll_open'>
+     <option value='1'{%if poll.open %} selected='selected'{%endif%}>{%trans "Open"%}</option>
+     <option value='0'{%if not poll.open %} selected='selected'{%endif%}>{%trans "Closed"%}</option>
+    </select>
+   </td>
+   <td class='form_description'>{% trans "Status of the poll. When closed no vote add or modification are allowed" %}</td>
+  </tr>{% endif %}
+
+  <tr>
+   <td><label for='poll_public'>{% trans "Public" %}</label></td>
+   <td colspan='2'>
+    <select name='poll_public'>
+     <option value='1'{%if poll.public %} selected='selected'{%endif%}>{%trans "Yes"%}</option>
+     <option value='0'{%if not poll.public %} selected='selected'{%endif%}>{%trans "No"%}</option>
+    </select>
+   </td>
+   <td class='form_description'>{% trans "If the poll is public it is available on the main page" %}</td>
+  </tr>
+
+  {% if categories %}<tr>
+   <td><label for='poll_category'>{% trans "Poll category" %}</label></td>
+   <td colspan='2'>{% if new %}
+    <select name='poll_category'>
+     <option value=''>---</option>
+     {% for category in categories %}<option value='{{category.id}}'>{{category.name}}</option>{% endfor %}
+    </select>{%else%}{{poll.category.name}}
+   {% endif %}</td>
+   <td class='form_description'>{% trans "Category of the poll" %}</td>
+  </tr>{% endif %}
+
   <tr>
    <td><label for='poll_type'>{% trans "Poll type" %}</label></td>
    <td colspan='2'>{% if new %}<select name='poll_type'>
@@ -48,6 +87,7 @@
    </ul>
    </td>
   </tr>
+
   {% if choices %}<tr>
    <th>{% trans "Choices" %}</th><th>{% trans "Label" %}</th><th>{% trans "Limit" %}</th><th>{% trans "Delete?"%}</th>
   </tr>
@@ -55,6 +95,7 @@
    <td>&nbsp;</td><td><input type='text' name='modify_{{choice.id}}' value="{{choice.name}}"/></td><td>{%if choice.limit%}{% blocktrans with choice.limit as choice_limit%}Limited to {{choice_limit}} vote(s){% endblocktrans %}{%endif%}</td><td><input type='checkbox' name='delete_{{choice.id}}'/></td>
   </tr>
   {% endfor %}{% endif %}
+
   <tr>
    <td></td>
    <td>{% if new %}<input type='hidden' name='new' value='1'/>
@@ -63,6 +104,7 @@
    <input type='submit' value='{% trans "Edit" %}' />
    {% endif %}</td>
   </tr>
+
  </form>
 {% if new %}
 </table>
