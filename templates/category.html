@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h2>{{category.name}}</h2>
+<p>{{category.description}}</p>
+
+{% if polls %}<h2>{%trans "Polls"%}</h2>{%endif%}
+{% for poll in polls %}
+<p><a href='/papillon/poll/{{poll.base_url}}'>{{poll.name}}</a> {{poll.description}}</p>
+{% endfor %}
+
+{% endblock %}
