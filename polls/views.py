@@ -202,9 +202,13 @@ public=public)
                 Vote.objects.filter(choice=choice).delete()
                 choice.delete()
             if key.startswith('modify_') and request.POST[key]:
-                choice = Choice.objects.get(id=int(key[len('modify_'):]))
-                choice.name = request.POST[key]
-                choice.save()
+                try:
+                    choice = Choice.objects.get(id=int(key[len('modify_'):]))
+                    choice.name = request.POST[key]
+                    choice.save()
+                except Choice.DoesNotExist:
+                    # throw when want to modify a deleted choice
+                    pass
         return response_dct, None
 
     response_dct, redirect = getBaseResponse(request)
@@ -394,7 +398,7 @@ def poll(request, poll_url):
         return HttpResponseRedirect(url)
 
     # a vote is submitted
-    if 'author_name' in request.POST:
+    if 'author_name' in request.POST and poll.open:
         if 'voter' in request.POST:
             # modification of an old vote
             modifyVote(request, choices)
@@ -404,17 +408,14 @@ def poll(request, poll_url):
         poll.save()
 
     # 'voter' is in request.GET when the edit button is pushed
-    if 'voter' in request.GET:
+    if 'voter' in request.GET and poll.open:
         try:
             response_dct['current_voter_id'] = int(request.GET['voter'])
         except ValueError:
             pass
 
     response_dct.update({'poll_type_name':poll.getTypeLabel(),
-                         'poll_type':poll.type,
-                         'poll_name':poll.name,
-                         'poll_desc':poll.description,
-                         'poll_base_url':poll.base_url,
+                         'poll':poll,
                          'VOTE':Vote.VOTE,})
     response_dct['base_url'] = "/".join(request.path.split('/')[:-2]) \
                                + '/%s/' % poll.base_url
@@ -423,6 +424,8 @@ def poll(request, poll_url):
     voters = Voter.objects.filter(poll=poll)
     for choice in choices:
         choice.sum = 0
+    max = -100
+    max_ids = []
     choice_ids = [choice.id for choice in choices]
     for voter in voters:
         # highlight a voter
@@ -436,7 +439,13 @@ def poll(request, poll_url):
         for vote in voter.votes:
             if vote.choice.id in choice_ids:
                 if vote.value:
-                    choices[choice_ids.index(vote.choice.id)].sum += vote.value
+                    c_id = choice_ids.index(vote.choice.id)
+                    choices[c_id].sum += vote.value
+                    if choices[c_id].sum > max:
+                        max_ids = [c_id]
+                        max = choices[c_id].sum
+                    elif choices[c_id].sum == max:
+                        max_ids.append(c_id)
             else:
                 # the choice is probably not available anymore
                 voter.votes.remove(vote)
@@ -449,7 +458,8 @@ def poll(request, poll_url):
                 vote.save()
                 idx = choices.index(choice)
                 voter.votes.insert(idx, vote)
-
+        for max_id in max_ids:
+            choices[max_id].highlight = True
     # set non-available choices if the limit is reached for a choice
     response_dct['limit_set'] = None
     for choice in choices:

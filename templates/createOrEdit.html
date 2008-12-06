@@ -7,7 +7,7 @@
  {% endif %}
  <h2>{% if new %}{% trans "New poll" %}{% else %}{% trans "Edit poll" %}{% endif %}</h2>
 {% if error %}<p class='error'>{{ error }}</p>{% endif %}
-<table id='new_poll'>
+<table class='new_poll'>
 <form action="{{admin_url}}" method="post">
 
   {% if not new %}<tr>
@@ -88,14 +88,6 @@
    </td>
   </tr>
 
-  {% if choices %}<tr>
-   <th>{% trans "Choices" %}</th><th>{% trans "Label" %}</th><th>{% trans "Limit" %}</th><th>{% trans "Delete?"%}</th>
-  </tr>
-  {% for choice in choices %}<tr>
-   <td>&nbsp;</td><td><input type='text' name='modify_{{choice.id}}' value="{{choice.name}}"/></td><td>{%if choice.limit%}{% blocktrans with choice.limit as choice_limit%}Limited to {{choice_limit}} vote(s){% endblocktrans %}{%endif%}</td><td><input type='checkbox' name='delete_{{choice.id}}'/></td>
-  </tr>
-  {% endfor %}{% endif %}
-
   <tr>
    <td></td>
    <td>{% if new %}<input type='hidden' name='new' value='1'/>
@@ -106,9 +98,24 @@
   </tr>
 
  </form>
-{% if new %}
 </table>
-{% else %}
+{% if not new %}
+<h2>{% trans "Choices" %}</h2>
+<table class='new_poll'>
+  {% if choices %}<form action="{{admin_url}}" method="post">
+  <tr>
+   <th>{% trans "Choices" %}</th><th>{% trans "Label" %}</th><th>{% trans "Limit" %}</th><th>{% trans "Delete?"%}</th>
+  </tr>
+  {% for choice in choices %}<tr>
+   <td>&nbsp;</td><td><input type='text' name='modify_{{choice.id}}' value="{{choice.name}}"/></td><td>{%if choice.limit%}{% blocktrans with choice.limit as choice_limit%}Limited to {{choice_limit}} vote(s){% endblocktrans %}{%endif%}</td><td><input type='checkbox' name='delete_{{choice.id}}'/></td>
+  </tr>{% endfor %}
+  <tr>
+   <td></td>
+   <td><input type='hidden' name='edit' value='1'/>
+   <input type='submit' value='{% trans "Edit" %}' /></td>
+  </tr>
+ </form>{% endif %}
+
  <form action="{{admin_url}}" method="post">
   <tr><td><label>{% trans "New choice" %}</label></td><td><input type='text' name='new_choice'/></td><td>{%trans "Limited to"%} <input type='text' name='limit' id='limit'/> {%trans "vote(s)"%}</td><td class='form_description'>{% trans "Setting a new choice. Optionally you can set a limit of vote for this choice. This limit is usefull for limited resources allocation." %}</td></tr>
   <tr>
