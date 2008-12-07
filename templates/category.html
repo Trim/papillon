@@ -8,7 +8,7 @@
 {% if polls %}<h2>{%trans "Polls"%}</h2>{%endif%}
 {% for poll in polls %}
 <div class='poll-description'>
- <p><a href='/papillon/poll/{{poll.base_url}}'>{{poll.name}}</a></p>
+ <p><a href='http://{{root_url}}poll/{{poll.base_url}}'>{{poll.name}}</a></p>
  <p>{{poll.description}}</p>
 </div>
 {% endfor %}

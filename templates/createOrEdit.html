@@ -52,11 +52,11 @@
   </tr>{% endif %}
 
   <tr>
-   <td><label for='poll_public'>{% trans "Public" %}</label></td>
+   <td><label for='poll_public'>{% trans "Visibility" %}</label></td>
    <td colspan='2'>
     <select name='poll_public'>
-     <option value='1'{%if poll.public %} selected='selected'{%endif%}>{%trans "Yes"%}</option>
-     <option value='0'{%if not poll.public %} selected='selected'{%endif%}>{%trans "No"%}</option>
+     <option value='0'{%if not poll.public %} selected='selected'{%endif%}>{%trans "Private"%}</option>
+     <option value='1'{%if poll.public %} selected='selected'{%endif%}>{%trans "Public"%}</option>
     </select>
    </td>
    <td class='form_description'>{% trans "If the poll is public it is available on the main page" %}</td>

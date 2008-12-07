@@ -237,8 +237,14 @@ background-color:grey;
 color:white;
 }
 
-#syndication{
+.footnote{
+font-size:10px;
 padding:10px;
+}
+
+.footnote p{
+padding:0;
+margin:2px;
 }
 
 .poll-description{

@@ -372,7 +372,8 @@ def poll(request, poll_url):
             if choice not in selected_choices:
                 v = Vote(voter=voter, choice=choice, value=0)
                 v.save()
-
+        # results can now be displayed
+        request.session['knowned_vote_' + poll.base_url] = 1
     response_dct, redirect = getBaseResponse(request)
     if redirect:
         return redirect
@@ -414,8 +415,7 @@ def poll(request, poll_url):
         except ValueError:
             pass
 
-    response_dct.update({'poll_type_name':poll.getTypeLabel(),
-                         'poll':poll,
+    response_dct.update({'poll':poll,
                          'VOTE':Vote.VOTE,})
     response_dct['base_url'] = "/".join(request.path.split('/')[:-2]) \
                                + '/%s/' % poll.base_url
@@ -472,4 +472,10 @@ def poll(request, poll_url):
         choice.save()
     response_dct['voters'] = voters
     response_dct['choices'] = choices
+    # verify if vote's result has to be displayed
+    response_dct['hide_vote'] = True
+    if u'display_result' in request.GET:
+        request.session['knowned_vote_' + poll.base_url] = 1
+    if 'knowned_vote_' + poll.base_url in request.session:
+        response_dct['hide_vote'] = False
     return render_to_response('vote.html', response_dct)

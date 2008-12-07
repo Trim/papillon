@@ -42,13 +42,13 @@ class PollLatestEntries(Feed):
     def link(self, obj):
         if not obj:
             raise FeedDoesNotExist
-        return BASE_SITE + "papillon/poll/" + obj.base_url
+        return BASE_SITE + "/poll/" + obj.base_url
 
     def description(self, obj):
         return obj.description
 
     def item_link(self, voter):
-        url = "%spapillon/poll/%s_%d" % (BASE_SITE, voter.poll.base_url,
+        url = "%s/poll/%s_%d" % (BASE_SITE, voter.poll.base_url,
                                time.mktime(voter.modification_date.timetuple()))
         return url
 
