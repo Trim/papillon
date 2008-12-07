@@ -24,6 +24,11 @@ font-family: Arial, Verdana, Geneva, "Bitstream Vera Sans", Helvetica, sans-seri
 background-color:#ced3e1;
 }
 
+pre{
+font-size:12px;
+font-family: Arial, Verdana, Geneva, "Bitstream Vera Sans", Helvetica, sans-serif;
+}
+
 a{
 color:#6f819d;
 }
@@ -150,6 +155,10 @@ width:600px;
 width:160px;
 }
 
+.new_poll .submit{
+width:auto;
+}
+
 .new_poll input.limit{
 width:20px;
 }
@@ -261,4 +270,40 @@ border:1px solid lightgrey;
 .poll-description p{
 margin:0;
 padding:2px;
+}
+
+
+.comments ul{
+list-style-type:None;
+margin:4px;
+padding:0;
+}
+
+.comments li{
+margin:4px;
+padding:4px;
+border:1px solid lightgrey;
+}
+
+.comments .author{
+margin:0;
+color:#6f819d;
+padding:0;
+}
+
+.comments input{
+width:160px;
+}
+
+.comments textarea{
+width:160px;
+height:100px;
+}
+
+.comments #tdsubmit{
+text-align:center;
+}
+
+.comments .submit{
+width:auto;
 }

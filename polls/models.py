@@ -63,6 +63,15 @@ class Poll(models.Model):
     def __unicode__(self):
         return self.name
 
+class Comment(models.Model):
+    '''Comment for a poll'''
+    poll = models.ForeignKey(Poll)
+    author_name = models.CharField(max_length=100)
+    text = models.CharField(max_length=1000)
+    date = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        ordering = ['date']
+
 class Voter(models.Model):
     user = models.ForeignKey(PollUser)
     poll = models.ForeignKey(Poll)

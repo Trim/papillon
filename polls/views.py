@@ -31,7 +31,8 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 
 from papillon.settings import LANGUAGES
-from papillon.polls.models import Poll, PollUser, Choice, Voter, Vote, Category
+from papillon.polls.models import Poll, PollUser, Choice, Voter, Vote, \
+                                  Category, Comment
 
 def getBaseResponse(request):
     """Manage basic fields for the template
@@ -364,6 +365,15 @@ def poll(request, poll_url):
                     # a new choice
                     v = Vote(voter=voter, choice=choice, value=0)
                 v.save()
+    def newComment(request, poll):
+        "Comment the poll"
+        if 'comment_author' not in request.POST \
+           or not request.POST['comment_author'] \
+           or not request.POST['comment']:
+            return
+        c = Comment(poll=poll, author_name=request.POST['comment_author'],
+                    text=request.POST['comment'])
+        c.save()
 
     def newVote(request, choices):
         "Create new votes"
@@ -449,6 +459,9 @@ def poll(request, poll_url):
             newVote(request, choices)
         # update the modification date of the poll
         poll.save()
+    if 'comment' in request.POST and poll.open:
+        # comment posted
+        newComment(request, poll)
 
     # 'voter' is in request.GET when the edit button is pushed
     if 'voter' in request.GET and poll.open:
@@ -501,6 +514,7 @@ def poll(request, poll_url):
         choice.save()
     response_dct['voters'] = voters
     response_dct['choices'] = choices
+    response_dct['comments'] = Comment.objects.filter(poll=poll)
     # verify if vote's result has to be displayed
     response_dct['hide_vote'] = True
     if u'display_result' in request.GET:

@@ -91,9 +91,9 @@
   <tr>
    <td></td>
    <td>{% if new %}<input type='hidden' name='new' value='1'/>
-   <input type='submit' value='{% trans "Create" %}' />
+   <input type='submit' value='{% trans "Create" %}' class='submit'/>
    {% else %}<input type='hidden' name='edit' value='1'/>
-   <input type='submit' value='{% trans "Edit" %}' />
+   <input type='submit' value='{% trans "Edit" %}' class='submit'/>
    {% endif %}</td>
   </tr>
 
@@ -112,7 +112,7 @@
   <tr>
    <td></td>
    <td><input type='hidden' name='edit' value='1'/>
-   <input type='submit' value='{% trans "Edit" %}' /></td>
+   <input type='submit' value='{% trans "Edit" %}' class='submit'/></td>
   </tr>
  </form>{% endif %}
 
@@ -120,7 +120,7 @@
   <tr><td><label>{% trans "New choice" %}</label></td><td><input type='text' name='new_choice'/></td><td>{%trans "Limited to"%} <input type='text' name='limit' class='limit'/> {%trans "vote(s)"%}</td><td class='form_description'>{% trans "Setting a new choice. Optionally you can set a limit of vote for this choice. This limit is usefull for limited resources allocation." %}</td></tr>
   <tr>
    <td></td>
-   <td><input type='hidden' name='add' value='1'/> <input type='submit' value='{% trans "Add" %}' /></td>
+   <td><input type='hidden' name='add' value='1'/> <input type='submit' value='{% trans "Add" %}' class='submit'/></td>
   </tr>
  </form>
 </table>

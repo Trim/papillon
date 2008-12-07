@@ -82,7 +82,7 @@
  </tr>{%endif%}
  </table>
  {% if poll.open %}
- <input type='submit' value='{%if current_voter_id%}{% trans "Edit" %}{%else%}{% trans "Participate" %}{%endif%}'/>
+ <input type='submit' value='{%if current_voter_id%}{% trans "Edit" %}{%else%}{% trans "Participate" %}{%endif%}' class='submit'/>
  {% endif %}
  </div>
  <hr class='spacer'/>
@@ -91,4 +91,25 @@
  {%if hide_vote%}<p>{% trans "You have already vote? You are enough wise not to be influenced by other votes? You can display result by clicking" %} <a href='?display_result=1'>{% trans "here" %}</a>.</p>{%else%}
  <p>{% trans "Remain informed of poll evolution:" %} <a href="http://{{root_url}}feeds/poll/{{poll.base_url}}/">{%trans "Syndication"%}</a></p>{%endif%}
  </div>
+{%if not hide_vote%}
+<h3>{%trans "Comments"%}</h3>
+<div class='comments'>
+ {%if poll.open%}<form method='post' action='{{base_url}}'>
+ <table class='comment'>
+  <tr>
+   <td><label for='comment_author'>{% trans "Author name" %}</label></td>
+   <td><input type='text' name='comment_author'/></td>
+  </tr>
+  <tr>
+   <td><label for='comment'>{% trans "Comment"%}</label></td>
+   <td><textarea name='comment'></textarea></td>
+  </tr>
+  <tr><td colspan='2' id='tdsubmit'><input type='submit' class='submit' value='{% trans "Send" %}'/></td></tr>
+ </table>
+</form>{%endif%}
+ <ul>{%for comment in comments%}
+  <li><p class='author'>{{comment.author_name}}, {{comment.date|date:_("DATETIME_FORMAT")}} :</p>
+  <pre>{{comment.text}}</pre>{%endfor%}
+ </dl>
+</div>{%endif%}
 {% endblock %}
