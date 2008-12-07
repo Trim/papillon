@@ -229,7 +229,6 @@ public=public)
                     pass
 
             if key.startswith('limit_'):
-                #request.POST[key]:
                 try:
                     choice = Choice.objects.get(id=int(key[len('limit_'):]))
                     if not request.POST[key]:
@@ -465,35 +464,13 @@ def poll(request, poll_url):
 
     # get voters and sum for each choice for this poll
     voters = Voter.objects.filter(poll=poll)
-    #for choice in choices:
-    #    choice.sum = 0
-    #max = -100
-    #max_ids = []
     choice_ids = [choice.id for choice in choices]
     for voter in voters:
         # highlight a voter
         if time.mktime(voter.modification_date.timetuple()) \
                                                          == highlight_vote_date:
             voter.highlight = True
-        #query = Vote.objects.filter(voter=voter)
-        #query = query.extra(where=['choice_id IN (%s)' \
-        #                    % ",".join([str(choice.id) for choice in choices])])
         voter.votes = voter.getVotes(choice_ids)
-        """for vote in voter.votes:
-            if vote.choice.id in choice_ids:
-                if vote.value:
-                    c_id = choice_ids.index(vote.choice.id)
-                    choices[c_id].sum += vote.value
-                    if choices[c_id].sum > max:
-                        max_ids = [c_id]
-                        max = choices[c_id].sum
-                    elif choices[c_id].sum == max:
-                        max_ids.append(c_id)
-            else:
-            if vote.choice.id not in choice_ids:
-                # the choice is probably not available anymore
-                voter.votes.remove(vote)
-                vote.delete()"""
         # initialize undefined vote
         choice_vote_ids = [vote.choice.id for vote in voter.votes]
         for choice in choices:
@@ -502,8 +479,6 @@ def poll(request, poll_url):
                 vote.save()
                 idx = choices.index(choice)
                 voter.votes.insert(idx, vote)
-        #for max_id in max_ids:
-        #    choices[max_id].highlight = True
     sums = [choice.getSum() for choice in choices]
     vote_max = max(sums)
     c_idx = 0
