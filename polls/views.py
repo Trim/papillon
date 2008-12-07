@@ -117,7 +117,8 @@ def createOrEdit(request, admin_url):
         admin_url = 'a' + genRandomURL()
         category = None
         if 'poll_category' in request.POST and request.POST['poll_category']:
-            category = Category.objects.get(id=int(request.POST['poll_category']))
+            category = \
+                     Category.objects.get(id=int(request.POST['poll_category']))
         public = False
         if 'poll_public' in request.POST and request.POST['poll_public']:
             value = False
@@ -195,6 +196,23 @@ public=public)
             choice = Choice(poll=poll, name=request.POST['new_choice'],
                             order=order, limit=limit)
             choice.save()
+        # check if the order of a choice has to be changed
+        for key in request.GET:
+            try:
+                if 'up_choice' in key:
+                    choice = Choice.objects.get(id=int(request.GET[key]))
+                    choice.changeOrder(-1)
+                    # redirect in order to avoid a change with a refresh
+                    url = response_dct['admin_url']
+                    return response_dct, HttpResponseRedirect(url)
+                if 'down_choice' in key:
+                    choice = Choice.objects.get(id=int(request.GET[key]))
+                    choice.changeOrder(1)
+                    # redirect in order to avoid a change with a refresh
+                    url = response_dct['admin_url']
+                    return response_dct, HttpResponseRedirect(url)
+            except (ValueError, Choice.DoesNotExist):
+                pass
         # check if a choice has been choosen for deletion or for modification
         for key in request.POST:
             if key.startswith('delete_') and request.POST[key]:
@@ -206,6 +224,31 @@ public=public)
                     choice = Choice.objects.get(id=int(key[len('modify_'):]))
                     choice.name = request.POST[key]
                     choice.save()
+                except Choice.DoesNotExist:
+                    # throw when want to modify a deleted choice
+                    pass
+
+            if key.startswith('limit_'):
+                #request.POST[key]:
+                try:
+                    choice = Choice.objects.get(id=int(key[len('limit_'):]))
+                    if not request.POST[key]:
+                        choice.limit = None
+                        choice.save()
+                    else:
+                        try:
+                            new_limit = int(request.POST[key])
+                            sum = choice.getSum()
+                            if new_limit < sum:
+                                response_dct['error'] = _("You cannot lower %s\
+'s limit to this number : there is currently %d votes for this choice.") % (
+                                                               choice.name, sum)
+                            else:
+                                choice.limit = new_limit
+                                choice.save()
+                        except ValueError:
+                            response_dct['error'] = _("Non-numeric value for \
+limit")
                 except Choice.DoesNotExist:
                     # throw when want to modify a deleted choice
                     pass
@@ -422,21 +465,21 @@ def poll(request, poll_url):
 
     # get voters and sum for each choice for this poll
     voters = Voter.objects.filter(poll=poll)
-    for choice in choices:
-        choice.sum = 0
-    max = -100
-    max_ids = []
+    #for choice in choices:
+    #    choice.sum = 0
+    #max = -100
+    #max_ids = []
     choice_ids = [choice.id for choice in choices]
     for voter in voters:
         # highlight a voter
         if time.mktime(voter.modification_date.timetuple()) \
                                                          == highlight_vote_date:
             voter.highlight = True
-        query = Vote.objects.filter(voter=voter)
-        query = query.extra(where=['choice_id IN (%s)' \
-                            % ",".join([str(choice.id) for choice in choices])])
-        voter.votes = list(query.order_by('choice'))
-        for vote in voter.votes:
+        #query = Vote.objects.filter(voter=voter)
+        #query = query.extra(where=['choice_id IN (%s)' \
+        #                    % ",".join([str(choice.id) for choice in choices])])
+        voter.votes = voter.getVotes(choice_ids)
+        """for vote in voter.votes:
             if vote.choice.id in choice_ids:
                 if vote.value:
                     c_id = choice_ids.index(vote.choice.id)
@@ -447,9 +490,10 @@ def poll(request, poll_url):
                     elif choices[c_id].sum == max:
                         max_ids.append(c_id)
             else:
+            if vote.choice.id not in choice_ids:
                 # the choice is probably not available anymore
                 voter.votes.remove(vote)
-                vote.delete()
+                vote.delete()"""
         # initialize undefined vote
         choice_vote_ids = [vote.choice.id for vote in voter.votes]
         for choice in choices:
@@ -458,14 +502,24 @@ def poll(request, poll_url):
                 vote.save()
                 idx = choices.index(choice)
                 voter.votes.insert(idx, vote)
-        for max_id in max_ids:
-            choices[max_id].highlight = True
+        #for max_id in max_ids:
+        #    choices[max_id].highlight = True
+    sums = [choice.getSum() for choice in choices]
+    vote_max = max(sums)
+    c_idx = 0
+    while c_idx < len(choices):
+        try:
+            c_idx = sums.index(vote_max, c_idx)
+            choices[c_idx].highlight = True
+            c_idx += 1
+        except ValueError:
+            c_idx = len(choices)
     # set non-available choices if the limit is reached for a choice
     response_dct['limit_set'] = None
     for choice in choices:
         if choice.limit:
            response_dct['limit_set'] = True
-        if choice.limit and choice.sum >= choice.limit:
+        if choice.limit and sums[choices.index(choice)] >= choice.limit:
             choice.available = False
         else:
             choice.available = True

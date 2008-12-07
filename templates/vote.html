@@ -77,7 +77,7 @@
  {%endif%}{%endif%}
  {% if not hide_vote %}<tr id='sum'>
   <td class='simple'></td><th>{% trans "Sum" %}</th>
-  {% for choice in choices %}<td{%if choice.highlight %} class='highlight'{%endif%}>{{choice.sum}}</td>
+  {% for choice in choices %}<td{%if choice.highlight %} class='highlight'{%endif%}>{{choice.getSum}}</td>
   {% endfor %}
  </tr>{%endif%}
  </table>

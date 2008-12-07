@@ -72,6 +72,13 @@ class Voter(models.Model):
         ordering = ['creation_date']
     def __unicode__(self):
         return _("Vote from %(user)s") % {'user':self.user.name}
+    def getVotes(self, choice_ids):
+        '''Get votes for a subset of choices
+        '''
+        query = Vote.objects.filter(voter=self)
+        query = query.extra(where=['choice_id IN (%s)' \
+                     % ",".join([str(choice_id) for choice_id in choice_ids])])
+        return list(query.order_by('choice'))
 
 class Choice(models.Model):
     poll = models.ForeignKey(Poll)
@@ -83,6 +90,37 @@ class Choice(models.Model):
         pass
     class Meta:
         ordering = ['order']
+
+    def getSum(self):
+        '''Get the sum of votes for this choice'''
+        sum = 0
+        for vote in Vote.objects.filter(choice=self):
+            sum += vote.value
+        return sum
+
+    def changeOrder(self, idx=1):
+        '''
+        Change a choice in the list
+        '''
+        if (self.order + idx) < 0:
+            return
+        choices = Choice.objects.filter(poll=self.poll)
+        if self.order + idx > len(choices):
+            return
+        new_order = self.order + idx
+        for choice in choices:
+            if choice == self:
+                continue
+            if idx < 0 and choice.order < self.order \
+               and choice.order >= new_order:
+               choice.order += 1
+               choice.save()
+            if idx > 0 and choice.order > self.order \
+               and choice.order <= new_order:
+               choice.order -= 1
+               choice.save()
+        self.order = new_order
+        self.save()
 
 class Vote(models.Model):
     voter = models.ForeignKey(Voter)

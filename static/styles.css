@@ -138,7 +138,7 @@ color:grey;
 text-decoration:none;
 }
 
-.alert{
+.alert, .error{
 color:blue;
 }
 
@@ -150,7 +150,7 @@ width:600px;
 width:160px;
 }
 
-.new_poll input#limit{
+.new_poll input.limit{
 width:20px;
 }
 
@@ -164,6 +164,11 @@ background-color:#6f819d;
 color:white;
 font-size:11px;
 width:200px;
+}
+
+a.arrow{
+text-decoration:None;
+font-weight:bold;
 }
 
 #content{
