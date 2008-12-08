@@ -21,8 +21,12 @@
 Models management
 '''
 
+import datetime
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from papillon.settings import DAYS_TO_LIVE
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -56,6 +60,27 @@ class Poll(models.Model):
     def getTypeLabel(self):
         idx = [type[0] for type in self.TYPE].index(self.type)
         return Poll.TYPE[idx][1]
+
+    def checkForErasement(self):
+        '''Check if the poll has to be deleted'''
+        if not DAYS_TO_LIVE:
+            return
+        now = datetime.datetime.now()
+        dtl = datetime.timedelta(days=DAYS_TO_LIVE)
+        if self.modification_date + dtl > now:
+            return
+        voters = Voter.objects.filter(poll=self)
+        for voter in voters:
+            if voter.modification_date + dtl > now:
+                return
+        for voter in voters:
+            voter.user.delete()
+            voter.delete()
+        comments = Comment.objects.filter(poll=self)
+        for comment in comments:
+            comment.delete()
+        self.delete()
+
     class Admin:
         pass
     class Meta:

@@ -7,6 +7,8 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 BASE_SITE = 'http://localhost:8000/papillon'
+# time to live in days
+DAYS_TO_LIVE = 30
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
