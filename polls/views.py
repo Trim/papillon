@@ -240,9 +240,9 @@ public=public)
                             new_limit = int(request.POST[key])
                             sum = choice.getSum()
                             if new_limit < sum:
-                                response_dct['error'] = _("You cannot lower %s\
-'s limit to this number : there is currently %d votes for this choice.") % (
-                                                               choice.name, sum)
+                                response_dct['error'] = _("You cannot lower \
+%(name)s's limit to this number : there is currently %(sum)d votes for this \
+choice.") % {'name':choice.name, 'sum':sum}
                             else:
                                 choice.limit = new_limit
                                 choice.save()
