@@ -23,8 +23,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.syndication.feeds import Feed
 from django.utils.translation import gettext_lazy as _
 
-from settings import BASE_SITE
-from polls.models import Poll, Vote, Voter
+from papillon.settings import BASE_SITE
+from papillon.polls.models import Poll, Vote, Voter
 
 class VoterFeedObject:
     def __init__(self, voter):
