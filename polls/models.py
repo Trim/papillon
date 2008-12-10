@@ -128,7 +128,7 @@ class Choice(models.Model):
     def getSum(self):
         '''Get the sum of votes for this choice'''
         sum = 0
-        for vote in Vote.objects.filter(choice=self):
+        for vote in Vote.objects.filter(choice=self, value__isnull=False):
             sum += vote.value
         return sum
 
