@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-09 11:01+0100\n"
+"POT-Creation-Date: 2008-12-16 22:53+0100\n"
 "PO-Revision-Date: 2008-08-20 00:22+0200\n"
 "Last-Translator: Étienne Loks <etienne.loks@peacefrogs.net>,\n"
 "Language-Team: fr\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: polls/feeds.py:40
+#: polls/feeds.py:37
 msgid "Papillon - poll : "
 msgstr "Papillon - sondage : "
 
@@ -32,20 +32,20 @@ msgstr "Sondage pondéré"
 msgid "One choice poll"
 msgstr "Sondage à choix unique"
 
-#: polls/models.py:108
+#: polls/models.py:113
 #, python-format
 msgid "Vote from %(user)s"
 msgstr "Vote de %(user)s"
 
-#: polls/models.py:162
+#: polls/models.py:167
 msgid "Yes"
 msgstr "Oui"
 
-#: polls/models.py:163 polls/models.py:164
+#: polls/models.py:168 polls/models.py:169
 msgid "No"
 msgstr "Non"
 
-#: polls/models.py:163
+#: polls/models.py:168
 msgid "Maybe"
 msgstr "Peut-être"
 
@@ -330,6 +330,22 @@ msgstr "Envoyer"
 #: templates/vote.html:111
 msgid "DATETIME_FORMAT"
 msgstr ""
+
+#: templates/feeds/poll_description.html:2
+#, python-format
+msgid "%(voter_name)s has added/modified a vote."
+msgstr "%(voter_name)s a ajouté ou modifié un vote."
+
+#: templates/feeds/poll_description.html:3
+msgid "Current results:"
+msgstr "Résultats actuels :"
+
+#: templates/feeds/poll_description.html:6
+#, python-format
+msgid ": %(sum)s vote"
+msgid_plural ": %(sum)s votes"
+msgstr[0] " : %(sum)s vote"
+msgstr[1] " : %(sum)s votes"
 
 #~ msgid "French"
 #~ msgstr "Français"

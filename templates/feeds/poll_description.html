@@ -1,0 +1,8 @@
+{% load i18n %}
+<p>{% blocktrans with obj.user.name as voter_name %}{{ voter_name }} has added/modified a vote.{%endblocktrans%}</p>
+<p>{% trans "Current results:" %}</p>
+<ul>
+{% for choice in obj.poll.getChoices %}
+ <li><strong>{{choice.name}}</strong>{% blocktrans count choice.getSum as sum %}: {{sum}} vote{%plural%}: {{sum}} votes{%endblocktrans%}</li>
+{% endfor %}
+</ul>

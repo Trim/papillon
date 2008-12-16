@@ -81,6 +81,11 @@ class Poll(models.Model):
             comment.delete()
         self.delete()
 
+    def getChoices(self):
+        """
+        Get choices associated to this vote"""
+        return Choice.objects.filter(poll=self)
+
     class Admin:
         pass
     class Meta:

@@ -26,9 +26,6 @@ from django.utils.translation import gettext_lazy as _
 from papillon.settings import BASE_SITE
 from papillon.polls.models import Poll, Vote, Voter
 
-class VoterFeedObject:
-    def __init__(self, voter):
-        self.voter = voter
 
 class PollLatestEntries(Feed):
     def get_object(self, poll_url):
