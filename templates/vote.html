@@ -98,18 +98,18 @@
  <table class='comment'>
   <tr>
    <td><label for='comment_author'>{% trans "Author name" %}</label></td>
-   <td><input type='text' name='comment_author'/></td>
+   <td><input type='text' id='comment_author' name='comment_author'/></td>
   </tr>
   <tr>
    <td><label for='comment'>{% trans "Comment"%}</label></td>
-   <td><textarea name='comment'></textarea></td>
+   <td><textarea id='comment' name='comment' cols='' rows=''></textarea></td>
   </tr>
   <tr><td colspan='2' id='tdsubmit'><input type='submit' class='submit' value='{% trans "Send" %}'/></td></tr>
  </table>
 </form>{%endif%}
  <ul>{%for comment in comments%}
   <li><p class='author'>{{comment.author_name}}, {{comment.date|date:_("DATETIME_FORMAT")}} :</p>
-  <pre>{{comment.text}}</pre>{%endfor%}
- </dl>
+  <pre>{{comment.text}}</pre></li>{%endfor%}
+ </ul>
 </div>{%endif%}
 {% endblock %}
