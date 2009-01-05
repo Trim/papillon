@@ -80,10 +80,11 @@
   {% for choice in choices %}<td{%if choice.highlight %} class='highlight'{%endif%}>{{choice.getSum}}</td>
   {% endfor %}
  </tr>{%endif%}
- </table>
  {% if poll.open %}
- <input type='submit' value='{%if current_voter_id%}{% trans "Edit" %}{%else%}{% trans "Participate" %}{%endif%}' class='submit'/>
+ <td class='simple'></td>
+ <td class='simple'><input type='submit' value='{%if current_voter_id%}{% trans "Edit" %}{%else%}{% trans "Participate" %}{%endif%}' class='submit'/></td>
  {% endif %}
+ </table>
  </div>
  <hr class='spacer'/>
  </form>
