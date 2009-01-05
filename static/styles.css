@@ -186,7 +186,10 @@ margin:5px;
 
 #poll_table{
 overflow:auto;
+overflow-y:visible;
 text-align:center;
+width:100%;
+padding-bottom:16px;
 display:block;
 float:left;
 }
