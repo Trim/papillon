@@ -51,8 +51,8 @@ class Poll(models.Model):
     modification_date = models.DateTimeField(auto_now=True)
     public = models.BooleanField(default=False)
     open = models.BooleanField(default=True)
-    TYPE = (('P', _('Poll')),
-            ('B', _('Balanced poll')),
+    TYPE = (('P', _('Yes/No poll')),
+            ('B', _('Yes/No/Maybe poll')),
             ('O', _('One choice poll')),)
     #        ('M', _('Meeting')),)
     type = models.CharField(max_length=1, choices=TYPE)
@@ -130,11 +130,13 @@ class Choice(models.Model):
     class Meta:
         ordering = ['order']
 
-    def getSum(self):
+    def getSum(self, balanced_poll=None):
         '''Get the sum of votes for this choice'''
         sum = 0
         for vote in Vote.objects.filter(choice=self, value__isnull=False):
             sum += vote.value
+        if balanced_poll:
+            return sum/2
         return sum
 
     def changeOrder(self, idx=1):

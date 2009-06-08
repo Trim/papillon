@@ -33,6 +33,7 @@ from django.http import HttpResponseRedirect
 from papillon.settings import LANGUAGES
 from papillon.polls.models import Poll, PollUser, Choice, Voter, Vote, \
                                   Category, Comment
+from papillon.polls.forms import CreateForm, CreateWithCatForm
 
 def getBaseResponse(request):
     """Manage basic fields for the template
@@ -72,6 +73,48 @@ def category(request, category_id):
     response_dct['category'] = category
     response_dct['polls'] = Poll.objects.filter(public=True, category=category)
     return render_to_response('category.html', response_dct)
+
+def create(request):
+    '''Creation of a poll.
+    '''
+    def genRandomURL():
+        "Generation of a random url"
+        url = ''
+        while not url or Poll.objects.filter(base_url=url).count() or\
+              Poll.objects.filter(admin_url=url).count():
+            url = ''
+            chars = string.letters + string.digits
+            for i in xrange(6):
+                url += random_choice(chars)
+            url += str(int(time.time()))
+        return url
+    
+    response_dct, redirect = getBaseResponse(request)
+    base_form = CreateForm 
+    if Category.objects.all().count():
+        base_form = CreateWithCatForm
+
+    if request.method == 'POST':
+        form = base_form(request.POST)
+        if form.is_valid():
+            author = PollUser(name=form.cleaned_data['author_name'])
+            author.save()
+            base_url = genRandomURL()
+            admin_url = genRandomURL()
+            category = None
+            if 'category' in form.cleaned_data:
+                category = form.cleaned_data['category']
+            poll = Poll(name=form.cleaned_data['name'],
+description=form.cleaned_data['description'], author=author, base_url=base_url,
+admin_url=admin_url, type=form.cleaned_data['poll_type'], category=category,
+public=form.cleaned_data['public'])
+            poll.save()
+            return HttpResponseRedirect('http://%sedit/%s/' % (
+                            response_dct['root_url'], admin_url))
+    else:
+        form = base_form()
+    response_dct['form'] = form
+    return render_to_response('create.html', response_dct)
 
 def createOrEdit(request, admin_url):
     '''Creation or edition of a poll.
@@ -492,7 +535,7 @@ def poll(request, poll_url):
                 vote.save()
                 idx = choices.index(choice)
                 voter.votes.insert(idx, vote)
-    sums = [choice.getSum() for choice in choices]
+    sums = [choice.getSum(poll.type == 'B') for choice in choices]
     vote_max = max(sums)
     c_idx = 0
     while c_idx < len(choices):

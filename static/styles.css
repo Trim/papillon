@@ -143,7 +143,7 @@ color:#808080;
 text-decoration:none;
 }
 
-.alert, .error{
+.alert, .error, .errorlist{
 color:blue;
 }
 

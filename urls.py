@@ -30,6 +30,7 @@ feeds = {
 urlpatterns = patterns('',
      (r'^papillon/admin/(.*)', admin.site.root),
      (r'^papillon/$', 'papillon.polls.views.index'),
+     (r'^papillon/create$', 'papillon.polls.views.create'),
      (r'^papillon/edit/(?P<admin_url>\w+)/$',
             'papillon.polls.views.createOrEdit'),
      (r'^papillon/category/(?P<category_id>\w+)/$',
