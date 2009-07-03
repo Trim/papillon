@@ -24,6 +24,11 @@ Settings for administration pages
 from papillon.polls.models import Poll, Category
 from django.contrib import admin
 
+class PollAdmin(admin.ModelAdmin):
+    search_fields = ("name",)
+    list_display = ('name', 'category', 'modification_date', 'public', 'open')
+    list_filter = ('public', 'open', 'category')
+
 # register of differents database fields
 admin.site.register(Category)
-admin.site.register(Poll)
+admin.site.register(Poll, PollAdmin)
