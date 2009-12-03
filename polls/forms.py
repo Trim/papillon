@@ -22,17 +22,24 @@ Forms management
 '''
 
 from django import forms
-from django.utils.translation import gettext_lazy as _
-from django.utils.html import escape
-from django.utils.safestring import mark_safe
-from django.forms.util import flatatt
+from django.contrib.admin import widgets as adminwidgets
 
 from papillon.polls.models import Poll, Category
+from papillon import settings
+
+class TextareaWidget(forms.Textarea):
+    """
+    Manage the edition of a text using TinyMCE
+    """
+    class Media:
+        js = ["%stiny_mce.js" % settings.TINYMCE_URL,
+              "%stextareas.js" % settings.MEDIA_URL,]
+
 
 class PollForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(PollForm, self).__init__(*args, **kwargs)
-        self.fields['description'].widget = forms.widgets.Textarea()
+        self.fields['description'].widget = TextareaWidget()
 
 class CreatePollForm(PollForm):
     class Meta:
@@ -49,3 +56,6 @@ class AdminPollForm(PollForm):
                    'dated_choices', 'type']
         if not Category.objects.all():
             exclude.append('category')
+    def __init__(self, *args, **kwargs):
+        super(AdminPollForm, self).__init__(*args, **kwargs)
+        self.fields['enddate'].widget = adminwidgets.AdminSplitDateTime()

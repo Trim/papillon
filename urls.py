@@ -29,6 +29,8 @@ feeds = {
 
 urlpatterns = patterns('',
      (r'^papillon/admin/(.*)', admin.site.root),
+     (r'^papillon/admin/doc/', include('django.contrib.admindocs.urls')),
+     (r'^papillon/admin/jsi18n/$', 'django.views.i18n.javascript_catalog'),
      (r'^papillon/$', 'papillon.polls.views.index'),
      (r'^papillon/create$', 'papillon.polls.views.create'),
      (r'^papillon/edit/(?P<admin_url>\w+)/$',
@@ -41,4 +43,7 @@ urlpatterns = patterns('',
                  'django.contrib.syndication.views.feed', {'feed_dict': feeds}),
      (r'^papillon/static/(?P<path>.*)$', 'django.views.static.serve',
                                 {'document_root': 'static/'}),
+     (r'^papillon/media/(?P<path>.*)$', 'django.views.static.serve',
+                                {'document_root': 'media/'}),
+     (r'^papillon/tinymce/', include('tinymce.urls')),
 )

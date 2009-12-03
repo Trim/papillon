@@ -7,7 +7,11 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ROOT_PATH = '/var/local/django/papillon/'
-BASE_SITE = 'http://localhost:8000/papillon'
+SERVER_URL = 'http://localhost:8000/'
+EXTRA_URL = 'papillon/'
+BASE_SITE = SERVER_URL + EXTRA_URL
+
+TINYMCE_URL = 'http://localhost/tinymce/'
 # time to live in days
 DAYS_TO_LIVE = 30
 
@@ -44,16 +48,16 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = ROOT_PATH + 'media/'
+MEDIA_ROOT = ROOT_PATH + 'static/'
 
 # URL that handles the media served from MEDIA_ROOT.
 # Example: "http://media.lawrence.com"
-MEDIA_URL = BASE_SITE
+MEDIA_URL = BASE_SITE + 'static/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = BASE_SITE + '/media/'
+ADMIN_MEDIA_PREFIX = BASE_SITE + 'media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'replace_this_with_something_else'
