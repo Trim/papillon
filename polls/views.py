@@ -30,10 +30,10 @@ from django.utils.translation import gettext_lazy as _
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 
-from papillon.settings import LANGUAGES
+from papillon.settings import LANGUAGES, BASE_SITE
 from papillon.polls.models import Poll, PollUser, Choice, Voter, Vote, \
                                   Category, Comment
-from papillon.polls.forms import CreateForm, CreateWithCatForm
+from papillon.polls.forms import CreatePollForm, AdminPollForm
 
 def getBaseResponse(request):
     """Manage basic fields for the template
@@ -88,33 +88,46 @@ def create(request):
                 url += random_choice(chars)
             url += str(int(time.time()))
         return url
-    
+
     response_dct, redirect = getBaseResponse(request)
-    base_form = CreateForm 
-    if Category.objects.all().count():
-        base_form = CreateWithCatForm
 
     if request.method == 'POST':
-        form = base_form(request.POST)
+        form = CreatePollForm(request.POST)
         if form.is_valid():
-            author = PollUser(name=form.cleaned_data['author_name'])
-            author.save()
-            base_url = genRandomURL()
-            admin_url = genRandomURL()
-            category = None
-            if 'category' in form.cleaned_data:
-                category = form.cleaned_data['category']
-            poll = Poll(name=form.cleaned_data['name'],
-description=form.cleaned_data['description'], author=author, base_url=base_url,
-admin_url=admin_url, type=form.cleaned_data['poll_type'], category=category,
-public=form.cleaned_data['public'])
+            poll = form.save()
+            poll.admin_url = genRandomURL()
+            poll.base_url = genRandomURL()
             poll.save()
             return HttpResponseRedirect('http://%sedit/%s/' % (
-                            response_dct['root_url'], admin_url))
+                            response_dct['root_url'], poll.admin_url))
     else:
-        form = base_form()
+        form = CreatePollForm()
     response_dct['form'] = form
     return render_to_response('create.html', response_dct)
+
+def edit(request, admin_url):
+    '''Edition of a poll.
+    '''
+    response_dct, redirect = getBaseResponse(request)
+    try:
+        poll = Poll.objects.filter(admin_url=admin_url)[0]
+    except IndexError:
+        # if the poll don't exist redirect to the creation page
+        url = response_dct['admin_url']
+        return response_dct, HttpResponseRedirect(url)
+    Form = AdminPollForm
+
+    if request.method == 'POST':
+        form = Form(request.POST, instance=poll)
+        if form.is_valid():
+            poll = form.save()
+            return HttpResponseRedirect('http://%sedit/%s/' % (
+                            response_dct['root_url'], poll.admin_url))
+    else:
+        form = Form(instance=poll)
+    response_dct['form'] = form
+    response_dct['poll'] = poll
+    return render_to_response('edit.html', response_dct)
 
 def createOrEdit(request, admin_url):
     '''Creation or edition of a poll.

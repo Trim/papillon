@@ -41,21 +41,29 @@ class PollUser(models.Model):
     modification_date = models.DateTimeField(auto_now=True)
 
 class Poll(models.Model):
+    base_url = models.CharField(max_length=100, help_text=_('Copy this \
+address and send it to voters who want to participate to this poll'))
+    admin_url = models.CharField(max_length=100,  help_text=_("Address to \
+modify the current poll"))
+    author_name = models.CharField(verbose_name=_("Author name"), 
+       max_length=100, help_text=_("Name, firstname or nickname of the author"))
+    author = models.ForeignKey(PollUser, null=True, blank=True)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=1000)
-    author = models.ForeignKey(PollUser)
     category = models.ForeignKey(Category, null=True, blank=True)
-    enddate = models.DateTimeField(null=True, blank=True)
-    base_url = models.CharField(max_length=100)
-    admin_url = models.CharField(max_length=100)
-    modification_date = models.DateTimeField(auto_now=True)
-    public = models.BooleanField(default=False)
-    open = models.BooleanField(default=True)
     TYPE = (('P', _('Yes/No poll')),
             ('B', _('Yes/No/Maybe poll')),
             ('O', _('One choice poll')),)
     #        ('M', _('Meeting')),)
     type = models.CharField(max_length=1, choices=TYPE)
+    dated_choices = models.BooleanField(verbose_name=_("Choices are dates"),
+        default=False, help_text=_("Check this option to choose between dates"))
+    enddate = models.DateTimeField(null=True, blank=True)
+    modification_date = models.DateTimeField(auto_now=True)
+    public = models.BooleanField(default=False)
+    opened_admin = models.BooleanField(default=False)
+    hide_choices = models.BooleanField(default=False)
+    open = models.BooleanField(default=True)
 
     def getTypeLabel(self):
         idx = [type[0] for type in self.TYPE].index(self.type)
