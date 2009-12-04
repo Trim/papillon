@@ -27,7 +27,7 @@ from django import forms
 from django.contrib.admin import widgets as adminwidgets
 from django.utils.translation import gettext_lazy as _
 
-from papillon.polls.models import Poll, Category, Choice
+from papillon.polls.models import Poll, Category, Choice, Comment
 from papillon import settings
 
 class TextareaWidget(forms.Textarea):
@@ -51,6 +51,21 @@ class CreatePollForm(PollForm):
         if not Category.objects.all():
             exclude.append('category')
 
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        exclude = ['date',]
+    def __init__(self, *args, **kwargs):
+        super(CommentForm, self).__init__(*args, **kwargs)
+        self.fields['text'].widget = TextareaWidget()
+
+# workaround for SplitDateTime with required=False
+class SplitDateTimeJSField(forms.SplitDateTimeField):
+    def __init__(self, *args, **kwargs):
+        super(SplitDateTimeJSField, self).__init__(*args, **kwargs)
+        self.widget.widgets[0].attrs = {'class': 'vDateField'}
+        self.widget.widgets[1].attrs = {'class': 'vTimeField'}
+
 class AdminPollForm(PollForm):
     class Meta:
         model = Poll
@@ -58,14 +73,14 @@ class AdminPollForm(PollForm):
                    'dated_choices', 'type']
         if not Category.objects.all():
             exclude.append('category')
-    def __init__(self, *args, **kwargs):
-        super(AdminPollForm, self).__init__(*args, **kwargs)
-        self.fields['enddate'].widget = adminwidgets.AdminSplitDateTime()
+    enddate = SplitDateTimeJSField(widget=adminwidgets.AdminSplitDateTime(),
+        required=False, label=Poll._meta.get_field('enddate').verbose_name,
+                        help_text=Poll._meta.get_field('enddate').help_text)
 
 class ChoiceForm(forms.ModelForm):
     class Meta:
         model = Choice
-        fields = ('name', 'limit', 'poll', 'order')
+        fields = ('name', 'limit', 'poll', 'order',)
     def __init__(self, *args, **kwargs):
         super(ChoiceForm, self).__init__(*args, **kwargs)
         self.fields['poll'].widget = forms.HiddenInput()

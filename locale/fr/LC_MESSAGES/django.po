@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-16 22:53+0100\n"
+"POT-Creation-Date: 2009-12-04 23:49+0100\n"
 "PO-Revision-Date: 2008-08-20 00:22+0200\n"
 "Last-Translator: Étienne Loks <etienne.loks@peacefrogs.net>,\n"
 "Language-Team: fr\n"
@@ -20,226 +20,205 @@ msgstr ""
 msgid "Papillon - poll : "
 msgstr "Papillon - sondage : "
 
+#: polls/forms.py:99
+msgid "Invalid poll"
+msgstr "Sondage non valide"
+
+#: polls/forms.py:114
+msgid "Invalid date format: YYYY-MM-DD HH:MM:SS"
+msgstr "Format de date invalide AAAA-MM-JJ HH:MM:SS"
+
+#: polls/models.py:44 templates/edit.html:22
+msgid ""
+"Copy this address and send it to voters who want to participate to this poll"
+msgstr "Copiez cette adresse et envoyez là aux participants à ce sondage."
+
+#: polls/models.py:46 templates/edit.html:31
+msgid "Address to modify the current poll"
+msgstr "Adresse de modification de ce sondage"
+
+#: polls/models.py:48 templates/vote.html:133
+msgid "Author name"
+msgstr "Nom de l'auteur"
+
+#: polls/models.py:49
+msgid "Name, firstname or nickname of the author"
+msgstr "Nom, prénom ou surnom de l'auteur"
+
+#: polls/models.py:51
+msgid "Poll name"
+msgstr "Nom du sondage"
+
+#: polls/models.py:52
+msgid "Global name to present the poll"
+msgstr "Nom général pour présenter le sondage"
+
 #: polls/models.py:54
-msgid "Poll"
-msgstr "Sondage"
+msgid "Poll description"
+msgstr "Description du sondage"
 
 #: polls/models.py:55
-msgid "Balanced poll"
-msgstr "Sondage pondéré"
+msgid "Precise description of the poll"
+msgstr "Description précise du sondage"
 
-#: polls/models.py:56
+#: polls/models.py:57
+msgid "Yes/No poll"
+msgstr "Oui/Non"
+
+#: polls/models.py:58
+msgid "Yes/No/Maybe poll"
+msgstr "Oui/Non/Peut-être"
+
+#: polls/models.py:59
 msgid "One choice poll"
 msgstr "Sondage à choix unique"
 
-#: polls/models.py:113
+#: polls/models.py:60
+msgid "Valuable choice poll"
+msgstr "Sondage pondéré"
+
+#: polls/models.py:62
+msgid "Type of the poll"
+msgstr "Type du sondage"
+
+#: polls/models.py:63
+msgid ""
+"Type of the poll:\n"
+"\n"
+" - \"Yes/No poll\" is the appropriate type for a simple multi-choice poll\n"
+" - \"Yes/No/Maybe poll\" allows voters to stay undecided\n"
+" - \"One choice poll\" gives only one option to choose from\n"
+" - \"Valuable choice poll\" permit users to give a note between 0 to 9 to "
+"different choices\n"
+msgstr ""
+"Type du sondage :\n"
+"\n"
+" - \"Oui/Non\" est un sondage simple permettant de choisir entre plusieurs "
+"options\n"
+" - \"Oui/Non/Peut-être\" permet de laisser une option d'indécision aux "
+"votants\n"
+" - \"Sondage à choix unique\" ne permet que de choisir un choix parmi ceux "
+"proposés\n"
+" - \"Sondage pondéré\" permet aux utilisateurs de donner une note entre 0 et "
+"9 pour chaque choix\n"
+
+#: polls/models.py:71
+msgid "Choices are dates"
+msgstr "Les choix sont des dates"
+
+#: polls/models.py:72
+msgid "Check this option to choose between dates"
+msgstr "Cocher cette option pour choisir entre des dates"
+
+#: polls/models.py:74
+msgid "Closing date"
+msgstr "Date de fermeture"
+
+#: polls/models.py:74
+msgid "Closing date for participating to the poll"
+msgstr "Date de fermeture au vote du sondage"
+
+#: polls/models.py:78
+msgid "Display the poll on main page"
+msgstr "Afficher le sondage sur la page principale"
+
+#: polls/models.py:78
+msgid "Check this option to make the poll public"
+msgstr "Cocher cette option pour que le sondage soit publique"
+
+#: polls/models.py:81
+msgid "Allow users to add choices"
+msgstr "Permettre aux votants d'ajouter des choix"
+
+#: polls/models.py:81
+msgid "Check this option to open the poll to new choices submitted by users"
+msgstr ""
+"Cocher cette option pour permettre aux utilisateurs d'enrichir le sondage "
+"avec des nouveaux choix"
+
+#: polls/models.py:84
+msgid "Hide votes to new voters"
+msgstr "Cacher les résultats aux nouveaux votants"
+
+#: polls/models.py:84
+msgid "Check this option to hide poll results to new users"
+msgstr ""
+"Cocher cette option pour cacher, dans un premier temps, les résultats d'un "
+"sondage"
+
+#: polls/models.py:87
+msgid "State of the poll"
+msgstr "État du sondage"
+
+#: polls/models.py:87
+msgid "Uncheck this option to close the poll/check this option to reopen it"
+msgstr ""
+"Décocher cette option pour fermet le sondage aux votes/cocher cette option "
+"pour l'ouvrir de nouveau"
+
+#: polls/models.py:156
 #, python-format
 msgid "Vote from %(user)s"
 msgstr "Vote de %(user)s"
 
-#: polls/models.py:167
+#: polls/models.py:224
 msgid "Yes"
 msgstr "Oui"
 
-#: polls/models.py:168 polls/models.py:169
+#: polls/models.py:225 polls/models.py:226
 msgid "No"
 msgstr "Non"
 
-#: polls/models.py:168
+#: polls/models.py:225
 msgid "Maybe"
 msgstr "Peut-être"
 
-#: polls/views.py:63
+#: polls/views.py:65
 msgid "The poll requested don't exist (anymore?)"
 msgstr "Le sondage que vous avez demandé n'existe pas (n'existe plus ?)"
-
-#: polls/views.py:97 templates/createOrEdit.html:26 templates/vote.html:100
-msgid "Author name"
-msgstr "Nom de l'auteur"
-
-#: polls/views.py:98 templates/createOrEdit.html:32
-msgid "Poll name"
-msgstr "Nom du sondage"
-
-#: polls/views.py:99 templates/createOrEdit.html:38
-msgid "Poll description"
-msgstr "Description du sondage"
-
-#: polls/views.py:100 templates/createOrEdit.html:77
-msgid "Poll type"
-msgstr "Type du sondage"
-
-#: polls/views.py:107
-#, python-format
-msgid "%s is a mandatory field"
-msgstr "%s est un champs obligatoire"
-
-#: polls/views.py:243
-#, python-format
-msgid ""
-"You cannot lower %(name)s's limit to this number : there is currently %(sum)"
-"d votes for this choice."
-msgstr ""
-"Vous ne pouvez limiter le vote de %(name)s à ce nombre : il y a actuellement "
-"%(sum)d votes pour ce choix."
-
-#: polls/views.py:250
-msgid "Non-numeric value for limit"
-msgstr "Valeur non numérique pour la limite"
 
 #: templates/category.html:8
 msgid "Polls"
 msgstr "Sondage"
 
-#: templates/createOrEdit.html:6
-msgid ""
-"As long as no options were added to the poll, it will not be made available."
-msgstr ""
-"Tant qu'aucune option ne sera ajouté au sondage, il ne sera pas disponible."
-
-#: templates/createOrEdit.html:9
+#: templates/create.html:11
 msgid "New poll"
 msgstr "Nouveau sondage"
 
-#: templates/createOrEdit.html:9
-msgid "Edit poll"
-msgstr "Éditer un sondage"
-
-#: templates/createOrEdit.html:14
-msgid "Poll url"
-msgstr "Adresse du sondage"
-
-#: templates/createOrEdit.html:16
-msgid ""
-"Copy this address and send it to voters who want to participate to this poll"
-msgstr "Copiez cette adresse et envoyez là aux participants à ce sondage."
-
-#: templates/createOrEdit.html:19
-msgid "Administration url"
-msgstr "Adresse d'administration"
-
-#: templates/createOrEdit.html:21
-msgid "Address to modify the current poll"
-msgstr "Adresse de modification de ce sondage"
-
-#: templates/createOrEdit.html:28
-msgid "Name, firstname or nickname of the author"
-msgstr "Nom, prénom ou surnom de l'auteur"
-
-#: templates/createOrEdit.html:34
-msgid "Global name to present the poll"
-msgstr "Nom général pour présenter le sondage"
-
-#: templates/createOrEdit.html:40
-msgid "Precise description of the poll"
-msgstr "Description précise du sondage"
-
-#: templates/createOrEdit.html:44
-msgid "Poll status"
-msgstr "État du sondage"
-
-#: templates/createOrEdit.html:47
-msgid "Open"
-msgstr "Ouvert"
-
-#: templates/createOrEdit.html:48
-msgid "Closed"
-msgstr "Fermé"
-
-#: templates/createOrEdit.html:51
-msgid "Status of the poll. When closed no vote add or modification are allowed"
-msgstr ""
-"État du vote. Quand celui-ci est fermé aucun ajout ou modification de n'est "
-"permise"
-
-#: templates/createOrEdit.html:55
-msgid "Visibility"
-msgstr "Visibilité"
-
-#: templates/createOrEdit.html:58
-msgid "Private"
-msgstr "Restreinte"
-
-#: templates/createOrEdit.html:59
-msgid "Public"
-msgstr "Publique"
-
-#: templates/createOrEdit.html:62
-msgid "If the poll is public it is available on the main page"
-msgstr "Si le sondage est public, il est visible sur la page principale"
-
-#: templates/createOrEdit.html:66
-msgid "Poll category"
-msgstr "Catégorie du sondage"
-
-#: templates/createOrEdit.html:73
-msgid "Category of the poll"
-msgstr "La catégorie du sondage"
-
-#: templates/createOrEdit.html:81
-msgid "Type of the poll:"
-msgstr "Type du sondage :"
-
-#: templates/createOrEdit.html:83
-msgid "Meeting is the appropriate type to set a date for a meeting."
-msgstr "Réunion est le type adéquat pour trouver une date pour une réunion"
-
-#: templates/createOrEdit.html:84
-msgid "\"Poll\" is the appropriate type for a simple multi-choice poll"
-msgstr "« Sondage » est le type adéquat pour un simple sondage à choix multiple"
-
-#: templates/createOrEdit.html:85
-msgid "\"Balanced poll\" lets voters setting negative vote for some choices"
-msgstr ""
-"« Sondage pondéré » permet aux participants de mettre des votes négatifs pour "
-"certains choix"
-
-#: templates/createOrEdit.html:86
-msgid "\"One choice poll\""
-msgstr "« Sondage à choix unique »"
-
-#: templates/createOrEdit.html:94
+#: templates/create.html:28
 msgid "Create"
 msgstr "Créer"
 
-#: templates/createOrEdit.html:96 templates/createOrEdit.html.py:115
-#: templates/vote.html:42 templates/vote.html.py:85
+#: templates/edit.html:13
+msgid "Edit poll"
+msgstr "Éditer un sondage"
+
+#: templates/edit.html:17
+msgid "Poll url"
+msgstr "Adresse du sondage"
+
+#: templates/edit.html:26
+msgid "Administration url"
+msgstr "Adresse d'administration"
+
+#: templates/edit.html:35
+msgid "Choices administration url"
+msgstr "Adresse d'administration des choix"
+
+#: templates/edit.html:40
+msgid "Address to modify choices of the current poll."
+msgstr "Adresse de modification des choix disponibles pour ce sondage"
+
+#: templates/edit.html:57 templates/editChoicesAdmin.html:38
+#: templates/vote.html:59 templates/vote.html.py:115
 msgid "Edit"
 msgstr "Modifier"
 
-#: templates/createOrEdit.html:103
-msgid "Choices"
-msgstr "Choix"
-
-#: templates/createOrEdit.html:107
-msgid "Up/down"
-msgstr "Haut/bas"
-
-#: templates/createOrEdit.html:107
-msgid "Label"
-msgstr "Libellé"
-
-#: templates/createOrEdit.html:107
-msgid "Limit"
-msgstr "Limite"
-
-#: templates/createOrEdit.html:107
-msgid "Delete?"
-msgstr "Supprimer ?"
-
-#: templates/createOrEdit.html:110 templates/createOrEdit.html.py:120
-msgid "Limited to"
-msgstr "Limité à"
-
-#: templates/createOrEdit.html:110 templates/createOrEdit.html.py:120
-msgid "vote(s)"
-msgstr "vote(s)"
-
-#: templates/createOrEdit.html:120
+#: templates/editChoices.html:4
 msgid "New choice"
 msgstr "Nouveau choix"
 
-#: templates/createOrEdit.html:120
+#: templates/editChoices.html:11
 msgid ""
 "Setting a new choice. Optionally you can set a limit of vote for this "
 "choice. This limit is usefull for limited resources allocation."
@@ -248,9 +227,65 @@ msgstr ""
 "vote pour ce choix. Cette limite est utile dans le cas d'attribution de "
 "ressources limitées."
 
-#: templates/createOrEdit.html:123
+#: templates/editChoices.html:15 templates/editChoicesAdmin.html:35
+#: templates/editChoicesUser.html:22
+msgid "Limited to"
+msgstr "Limité à"
+
+#: templates/editChoices.html:15 templates/editChoicesAdmin.html:35
+#: templates/editChoicesUser.html:22
+msgid "vote(s)"
+msgstr "vote(s)"
+
+#: templates/editChoices.html:16
 msgid "Add"
 msgstr "Ajouter"
+
+#: templates/editChoicesAdmin.html:14
+msgid "As long as no options were added to the poll, it will not be available."
+msgstr ""
+"Tant qu'aucune option ne sera ajouté au sondage, il ne sera pas disponible."
+
+#: templates/editChoicesAdmin.html:16
+msgid "Complete/Finalise the poll"
+msgstr "Complète/Finalise le sondage"
+
+#: templates/editChoicesAdmin.html:17
+msgid "Next"
+msgstr "Suivant"
+
+#: templates/editChoicesAdmin.html:21
+msgid "Available choices"
+msgstr "Choix disponibles"
+
+#: templates/editChoicesAdmin.html:24
+msgid "Up/down"
+msgstr "Haut/bas"
+
+#: templates/editChoicesAdmin.html:25 templates/editChoicesUser.html:17
+msgid "Label"
+msgstr "Libellé"
+
+#: templates/editChoicesAdmin.html:26 templates/editChoicesUser.html:18
+msgid "Limit"
+msgstr "Limite"
+
+#: templates/editChoicesAdmin.html:27
+msgid "Delete?"
+msgstr "Supprimer ?"
+
+#: templates/editChoicesUser.html:13
+msgid "Return to the poll"
+msgstr "Retourner au sondage"
+
+#: templates/editChoicesUser.html:14
+msgid "Choices"
+msgstr "Choix"
+
+#: templates/editChoicesUser.html:21 templates/vote.html:23
+#: templates/vote.html.py:144
+msgid "DATETIME_FORMAT"
+msgstr ""
 
 #: templates/main.html:6
 msgid "Create a poll"
@@ -275,27 +310,31 @@ msgstr "Sondages publics"
 msgid "Categories"
 msgstr "Catégories"
 
-#: templates/vote.html:7
+#: templates/vote.html:15
 msgid "The current poll is closed."
 msgstr "Le sondage actuel est fermé"
 
-#: templates/vote.html:15
+#: templates/vote.html:23
 msgid "max"
 msgstr "max"
 
-#: templates/vote.html:39 templates/vote.html.py:73
+#: templates/vote.html:54 templates/vote.html.py:103
 msgid "Limit reached"
 msgstr "Limite atteinte"
 
-#: templates/vote.html:79
+#: templates/vote.html:109
 msgid "Sum"
 msgstr "Somme"
 
-#: templates/vote.html:85
+#: templates/vote.html:115
 msgid "Participate"
 msgstr "Participer"
 
-#: templates/vote.html:91
+#: templates/vote.html:122
+msgid "Add a new choice to this poll?"
+msgstr "Ajouter un nouveau choix à ce sondage ?"
+
+#: templates/vote.html:124
 msgid ""
 "You have already vote? You are enough wise not to be influenced by other "
 "votes? You can display result by clicking"
@@ -303,33 +342,29 @@ msgstr ""
 "Vous avez déjà voté ? Vous pensez être suffisament sage pour ne pas être "
 "influencé par les autres votes ? Vous pouvez afficher le résultat en cliquant"
 
-#: templates/vote.html:91
+#: templates/vote.html:124
 msgid "here"
 msgstr "ici"
 
-#: templates/vote.html:92
+#: templates/vote.html:125
 msgid "Remain informed of poll evolution:"
 msgstr "Restez informé de l'évolution du sondage"
 
-#: templates/vote.html:92
+#: templates/vote.html:125
 msgid "syndication"
 msgstr "syndication"
 
-#: templates/vote.html:95
+#: templates/vote.html:128
 msgid "Comments"
 msgstr "Commentaires"
 
-#: templates/vote.html:104
+#: templates/vote.html:137
 msgid "Comment"
 msgstr "Commentaire"
 
-#: templates/vote.html:107
+#: templates/vote.html:140
 msgid "Send"
 msgstr "Envoyer"
-
-#: templates/vote.html:111
-msgid "DATETIME_FORMAT"
-msgstr ""
 
 #: templates/feeds/poll_description.html:2
 #, python-format
@@ -347,20 +382,3 @@ msgid_plural ": %(sum)s votes"
 msgstr[0] " : %(sum)s vote"
 msgstr[1] " : %(sum)s votes"
 
-#~ msgid "French"
-#~ msgstr "Français"
-
-#~ msgid "English"
-#~ msgstr "Anglais"
-
-#~ msgid "Limited to %(choice_limit)s vote(s)"
-#~ msgstr "Limité à %(choice_limit)s vote(s)"
-
-#~ msgid "Available"
-#~ msgstr "Disponible"
-
-#~ msgid "Disabled"
-#~ msgstr "Indisponible"
-
-#~ msgid "Meeting"
-#~ msgstr "Réunion"

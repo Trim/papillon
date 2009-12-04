@@ -1,55 +1,78 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load get_range %}
+
+{% block fullscript %}
+<script type="text/javascript" src="http://{{root_url}}admin/jsi18n/"></script>
+<script type="text/javascript" src="http://{{root_url}}media/js/core.js"></script>
+<script type="text/javascript" src="http://{{root_url}}media/js/admin/RelatedObjectLookups.js"></script>
+{{ form_comment.media }}
+{% endblock %}
 
 {% block content %}
  <h2>{%if poll.category %}{{poll.category.name}} - {%endif%}{{poll.name}}</h2>
 {% if error %}<p class='alert'>{{ error }}</p>{% endif %}
 {% if not poll.open %}<p class='alert'>{% trans "The current poll is closed."%}</p>{% endif %}
- <p>{{ poll.description }}</p>
+ <p>{{ poll.description|safe }}</p>
  <form method='post' action='{{base_url}}'>
  <div id='poll_table'>
  <table id='poll'>
  <tr>
   <td class='simple'></td>
   <td class='simple'></td>
-  {% for choice in choices %}<th>{{choice.name}}{% if choice.limit %} ({% trans "max" %} {{choice.limit}}){%endif%}</th>
+  {% for choice in choices %}<th>{%if poll.dated_choices%}{{choice.date|date:_("DATETIME_FORMAT")}}{%else%}{{choice.name}}{%endif%}{% if choice.limit %} ({% trans "max" %} {{choice.limit}}){%endif%}</th>
  {% endfor %}</tr>
  {% if not hide_vote %}
  {% for voter in voters %}<tr{% if voter.highlight %} class='highlighted_voter'{% endif %}>
- {% ifequal current_voter_id voter.id %}
-  <input type='hidden' name='voter' value='{{voter.id}}'/>
-  <td class='simple'></td>
-  <td><input type='text' name='author_name' value='{{voter.user.name}}'/></td>
-  {% for vote in voter.votes %}<td>
+{% ifequal current_voter_id voter.id %}
+ <input type='hidden' name='voter' value='{{voter.id}}'/>
+ <td class='simple'></td>
+ <td><input type='text' name='author_name' value='{{voter.user.name}}'/></td>
+ {% for vote in voter.votes %}<td>
   {% if vote.choice.available or vote.value %}
-  {% ifequal poll.type 'P' %}
-  <input type='checkbox' name='vote_{{vote.id}}'{%ifequal vote.value 1%} checked='checked'{%endifequal%}/>
-  {% endifequal %}
-  {% ifequal poll.type 'O' %}
-  <input type='radio' name='vote' value='{{vote.id}}' {%ifequal vote.value 1%} checked='checked'{%endifequal%}/>
-  {% endifequal %}
-  {% ifequal poll.type 'B' %}
-  <select name='vote_{{vote.id}}'>
+   {% ifequal poll.type 'P' %}
+    <input type='checkbox' name='vote_{{vote.id}}'{%ifequal vote.value 1%} checked='checked'{%endifequal%}/>
+   {% endifequal %}
+   {% ifequal poll.type 'O' %}
+    <input type='radio' name='vote' value='{{vote.id}}' {%ifequal vote.value 1%} checked='checked'{%endifequal%}/>
+   {% endifequal %}
+   {% ifequal poll.type 'B' %}
+    <select name='vote_{{vote.id}}'>
     {% for vote_choice in VOTE %}
-    <option value='{{vote_choice.0}}'{%ifequal vote.value vote_choice.0%} selected='selected'{%endifequal%}>{{vote_choice.1.1}}</option>
+     <option value='{{vote_choice.0}}'{%ifequal vote.value vote_choice.0%} selected='selected'{%endifequal%}>{{vote_choice.1.1}}</option>
     {% endfor %}
-  </select>
-  {% endifequal %}
+    </select>
+   {% endifequal %}
+   {% ifequal poll.type 'V' %}
+    <select name='vote_{{vote.id}}'>
+     {% for vote_choice in 10|get_range %}
+      <option value='{{vote_choice}}'{%ifequal vote.value vote_choice%} selected='selected'{%endifequal%}>{{vote_choice}}</option>
+     {% endfor %}
+    </select>
+   {% endifequal %}
   {% else %}
-  {% trans "Limit reached" %}
+   {% trans "Limit reached" %}
   {% endif %}
-  </td>{%endfor%}
-  {%else%}<td class='simple'>{% if poll.open %}<a href='?voter={{voter.id}}'>{% trans "Edit" %}</a>{%else%}&nbsp;{%endif%}</td>
-  <td>{{voter.user.name}}</td>
-  {% for vote in voter.votes %}<td class='{%ifequal vote.value 1%}OK{%else%}{%ifequal vote.value 0%}OKO{%else%}KO{%endifequal%}{%endifequal%}'>
-  {%ifequal poll.type 'B'%}
-  {%for VOT in VOTE%}
-  {%ifequal VOT.0 vote.value%}{{VOT.1.1}}{%endifequal%}{%endfor%}
-  {%else%}
-  {%for VOT in VOTE%}
-  {%ifequal VOT.0 vote.value%}{{VOT.1.0}}{%endifequal%}{%endfor%}
-  {%endifequal%}
-  </td>
+ </td>
+ {%endfor%}
+{%else%}
+ <td class='simple'>{% if poll.open %}<a href='?voter={{voter.id}}'>{% trans "Edit" %}</a>{%else%}&nbsp;{%endif%}</td>
+ <td>{{voter.user.name}}</td>
+ {% for vote in voter.votes %}
+  {% ifequal poll.type 'V' %}
+   <td class='{%ifequal vote.value 9%}OK{%else%}{%ifequal vote.value 0%}KO{%else%}OKO{%endifequal%}{%endifequal%}'>
+   {%if vote.value%}{{vote.value}}{%else%}0{%endif%}</td>
+  {% else %}
+   <td class='{%ifequal vote.value 1%}OK{%else%}{%ifequal vote.value 0%}OKO{%else%}KO{%endifequal%}{%endifequal%}'>
+   {%ifequal poll.type 'B'%}
+   {%for VOT in VOTE%}
+   {%ifequal VOT.0 vote.value%}{{VOT.1.1}}{%endifequal%}{%endfor%}
+   {%else%}
+   {%for VOT in VOTE%}
+   {%ifequal VOT.0 vote.value%}{{VOT.1.0}}{%endifequal%}{%endfor%}
+   {%endifequal%}
+   </td>
+  {% endifequal %}
   {%endfor%}
   {%endifequal%}
  </tr>{%endfor%}
@@ -67,6 +90,13 @@
   {% ifequal poll.type 'B' %}
   <select name='choice_{{choice.id}}'>{% for vote_choice in VOTE %}
     <option value='{{vote_choice.0}}'{%ifequal vote_choice.0 0%} selected='selected'{%endifequal%}>{{vote_choice.1.1}}</option>{% endfor %}
+  </select>
+  {% endifequal %}
+  {% ifequal poll.type 'V' %}
+  <select name='choice_{{choice.id}}'>
+    {% for vote_choice in 10|get_range %}
+    <option value='{{vote_choice}}'>{{vote_choice}}</option>
+    {% endfor %}
   </select>
   {% endifequal %}
   {% else %}
@@ -88,6 +118,8 @@
  </div>
  <hr class='spacer'/>
  </form>
+ {%if poll.opened_admin%}
+ <p><a href="http://{{root_url}}editChoicesUser/{{poll.base_url}}/">{%trans "Add a new choice to this poll?"%}</a></p>{%endif%}
  <div class='footnote'>
  {%if hide_vote%}<p>{% trans "You have already vote? You are enough wise not to be influenced by other votes? You can display result by clicking" %} <a href='?display_result=1'>{% trans "here" %}</a>.</p>{%else%}
  <p>{% trans "Remain informed of poll evolution:" %} <a href="http://{{root_url}}feeds/poll/{{poll.base_url}}/">{%trans "syndication"%}</a></p>{%endif%}
@@ -110,7 +142,7 @@
 </form>{%endif%}
  <ul>{%for comment in comments%}
   <li><p class='author'>{{comment.author_name}}, {{comment.date|date:_("DATETIME_FORMAT")}} :</p>
-  <pre>{{comment.text}}</pre></li>{%endfor%}
+  {{comment.text|safe}}</li>{%endfor%}
  </ul>
 </div>{%endif%}
 {% endblock %}

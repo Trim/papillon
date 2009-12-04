@@ -34,7 +34,7 @@ from papillon.settings import LANGUAGES, BASE_SITE
 from papillon.polls.models import Poll, PollUser, Choice, Voter, Vote, \
                                   Category, Comment
 from papillon.polls.forms import CreatePollForm, AdminPollForm, ChoiceForm, \
-                                 DatedChoiceForm
+                                 DatedChoiceForm, CommentForm
 
 def getBaseResponse(request):
     """Manage basic fields for the template
@@ -149,7 +149,7 @@ def editChoicesUser(request, poll_url):
     if redirect:
         return redirect
     try:
-        poll = Poll.objects.filter(poll_url=poll_url)[0]
+        poll = Poll.objects.filter(base_url=poll_url)[0]
     except IndexError:
         poll = None
     if not poll or not poll.opened_admin:
@@ -234,8 +234,8 @@ def editChoices(request, response_dct, admin=False):
                 pass
     choices = Choice.objects.filter(poll=poll).order_by('order')
     for choice in choices:
-        if poll.dated_choices:
-            choice.name = datetime.strptime(choice.name, '%Y-%m-%d %H:%M:%S')
+        if admin and poll.dated_choices:
+            choice.name = choice.date
         choice.form = Form(instance=choice)
     response_dct['choices'] = choices
     response_dct['form_new_choice'] = form
@@ -479,9 +479,11 @@ def poll(request, poll_url):
     response_dct['choices'] = choices
     response_dct['comments'] = Comment.objects.filter(poll=poll)
     # verify if vote's result has to be displayed
-    response_dct['hide_vote'] = True
-    if u'display_result' in request.GET:
-        request.session['knowned_vote_' + poll.base_url] = 1
-    if 'knowned_vote_' + poll.base_url in request.session:
-        response_dct['hide_vote'] = False
+    response_dct['hide_vote'] = poll.hide_choices
+    if poll.hide_choices:
+        if u'display_result' in request.GET:
+            request.session['knowned_vote_' + poll.base_url] = 1
+        if 'knowned_vote_' + poll.base_url in request.session:
+            response_dct['hide_vote'] = False
+    response_dct['form_comment'] = CommentForm()
     return render_to_response('vote.html', response_dct)

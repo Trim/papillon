@@ -65,7 +65,7 @@ modify the current poll"))
  - "Yes/No poll" is the appropriate type for a simple multi-choice poll
  - "Yes/No/Maybe poll" allows voters to stay undecided
  - "One choice poll" gives only one option to choose from
- - "Valuable choice poll" permit users to give a note between 0 to 10 to \
+ - "Valuable choice poll" permit users to give a note between 0 to 9 to \
 different choices
 """))
     dated_choices = models.BooleanField(verbose_name=_("Choices are dates"),
@@ -85,7 +85,7 @@ verbose_name=_("Hide votes to new voters"), help_text=_("Check this option to \
 hide poll results to new users"))
     open = models.BooleanField(default=True,
 verbose_name=_("State of the poll"), help_text=_("Uncheck this option to close \
-the poll/check the poll to reopen it"))
+the poll/check this option to reopen it"))
 
     def getTypeLabel(self):
         idx = [type[0] for type in self.TYPE].index(self.type)
@@ -172,6 +172,18 @@ class Choice(models.Model):
         pass
     class Meta:
         ordering = ['order']
+
+    def get_date(self):
+        if not self.poll.dated_choices:
+            return self.name
+        return datetime.datetime.strptime(self.name, '%Y-%m-%d %H:%M:%S')
+
+    def set_date(self, value):
+        self._date = value
+        #if not self.poll.dated_choices:
+        #    self.name = value
+        #self.name = datetime.strftime(value, '%Y-%m-%d %H:%M:%S')
+    date = property(get_date, set_date)
 
     def getSum(self, balanced_poll=None):
         '''Get the sum of votes for this choice'''

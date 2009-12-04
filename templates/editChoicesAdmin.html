@@ -19,7 +19,6 @@
 {% include 'editChoices.html' %}
 {% if choices %}
 <h2>{% trans "Available choices" %}</h2>
-<form action="" method="post">
 <table class='new_poll'>
   <tr>
    {%if not poll.dated_choices%}<th>{% trans "Up/down" %}</th>{%endif%}
@@ -27,7 +26,9 @@
    <th>{% trans "Limit" %}</th>
    <th>{% trans "Delete?"%}</th>
   </tr>
-  {% for choice in choices %}{{choice.form.poll}}{{choice.form.order}}<tr>
+  {% for choice in choices %}
+ <form action="" method="post">
+  {{choice.form.poll}}{{choice.form.order}}<tr>
    {%if not poll.dated_choices%}<td><a href='?up_choice={{choice.id}}' class='arrow'>+</a>
    / <a href='?down_choice={{choice.id}}' class='arrow'>-</a></td>{%endif%}
    <td>{{choice.form.name}}</td>
@@ -35,8 +36,9 @@
    <td><input type='checkbox' name='delete_{{choice.id}}'/></td>
    <td><input type='hidden' name='edit' value='{{choice.id}}'/></td>
    <td><input type='submit' value='{% trans "Edit" %}' class='submit'/></td>
-  </tr>{% endfor %}
+  </tr>
+ </form>{% endfor %}
 </table>
-</form>{% endif %}
+{% endif %}
 
 {% endblock %}
