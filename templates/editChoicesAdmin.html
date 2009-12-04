@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load markup %}
+{% load i18n %}
+
+{% block fullscript %}
+<script type="text/javascript" src="http://{{root_url}}admin/jsi18n/"></script>
+<script type="text/javascript" src="http://{{root_url}}media/js/core.js"></script>
+<script type="text/javascript" src="http://{{root_url}}media/js/admin/RelatedObjectLookups.js"></script>
+{{ form_new_choice.media }}
+{% endblock %}
+
+{% block content %}
+{% if not choices %}<p class='error'>
+{% blocktrans %}As long as no options were added to the poll, it will not be available.{% endblocktrans %}
+</p>{% else %}
+<h2>{% trans "Complete/Finalise the poll" %}</h2>
+<p><a href='http://{{root_url}}edit/{{poll.admin_url}}'><button>{% trans "Next"%}</button></p>
+{% endif %}
+{% include 'editChoices.html' %}
+{% if choices %}
+<h2>{% trans "Available choices" %}</h2>
+<form action="" method="post">
+<table class='new_poll'>
+  <tr>
+   {%if not poll.dated_choices%}<th>{% trans "Up/down" %}</th>{%endif%}
+   <th>{% trans "Label" %}</th>
+   <th>{% trans "Limit" %}</th>
+   <th>{% trans "Delete?"%}</th>
+  </tr>
+  {% for choice in choices %}{{choice.form.poll}}{{choice.form.order}}<tr>
+   {%if not poll.dated_choices%}<td><a href='?up_choice={{choice.id}}' class='arrow'>+</a>
+   / <a href='?down_choice={{choice.id}}' class='arrow'>-</a></td>{%endif%}
+   <td>{{choice.form.name}}</td>
+   <td>{% trans "Limited to"%} {{choice.form.limit}} {% trans "vote(s)" %}</td>
+   <td><input type='checkbox' name='delete_{{choice.id}}'/></td>
+   <td><input type='hidden' name='edit' value='{{choice.id}}'/></td>
+   <td><input type='submit' value='{% trans "Edit" %}' class='submit'/></td>
+  </tr>{% endfor %}
+</table>
+</form>{% endif %}
+
+{% endblock %}

@@ -33,7 +33,8 @@ from django.http import HttpResponseRedirect
 from papillon.settings import LANGUAGES, BASE_SITE
 from papillon.polls.models import Poll, PollUser, Choice, Voter, Vote, \
                                   Category, Comment
-from papillon.polls.forms import CreatePollForm, AdminPollForm
+from papillon.polls.forms import CreatePollForm, AdminPollForm, ChoiceForm, \
+                                 DatedChoiceForm
 
 def getBaseResponse(request):
     """Manage basic fields for the template
@@ -98,7 +99,7 @@ def create(request):
             poll.admin_url = genRandomURL()
             poll.base_url = genRandomURL()
             poll.save()
-            return HttpResponseRedirect('http://%sedit/%s/' % (
+            return HttpResponseRedirect('http://%seditChoicesAdmin/%s/' % (
                             response_dct['root_url'], poll.admin_url))
     else:
         form = CreatePollForm()
@@ -113,8 +114,9 @@ def edit(request, admin_url):
         poll = Poll.objects.filter(admin_url=admin_url)[0]
     except IndexError:
         # if the poll don't exist redirect to the creation page
-        url = response_dct['admin_url']
-        return response_dct, HttpResponseRedirect(url)
+        url = response_dct['root_url']
+        return HttpResponseRedirect('http://%screate' % (
+                            response_dct['root_url']))
     Form = AdminPollForm
 
     if request.method == 'POST':
@@ -129,210 +131,115 @@ def edit(request, admin_url):
     response_dct['poll'] = poll
     return render_to_response('edit.html', response_dct)
 
-def createOrEdit(request, admin_url):
-    '''Creation or edition of a poll.
-    admin_url is given to identify a particular poll
-    admin_url is equal to 0 for a new poll
-    response_dct is given to the template with some particular keys:
-     - error is an error message
-     - new is set to true if it is a new poll
-     - admin_url is the url of the current page
-    '''
-    def genRandomURL():
-        "Generation of a random url"
-        chars = string.letters + string.digits
-        url = ''
-        for i in xrange(6):
-            url += random_choice(chars)
-        url += str(int(time.time()))
-        return url
-
-    def submitNewPoll(request, response_dct):
-        "A new poll is submited"
-        # verify if all the mandatory_fields are set
-        mandatory_fields = (('author_name', _("Author name")),
-                            ('poll_name', _("Poll name")),
-                            ('poll_desc', _("Poll description")),
-                            ('poll_type', _("Poll type")),
-                            )
-        error = ""
-        for key, label in mandatory_fields:
-            if key not in request.POST or not request.POST[key]:
-                # only the first error is reported
-                if not error:
-                    error = _("%s is a mandatory field") % label
-            else:
-                response_dct[key] = request.POST[key]
-        if error:
-            response_dct['new'] = True
-            response_dct['error'] = error
-            response_dct['admin_url'] += '/0/'
-            return response_dct, None
-        author = PollUser(name=request.POST['author_name'])
-        author.save()
-        base_url = 'b' + genRandomURL()
-        admin_url = 'a' + genRandomURL()
-        category = None
-        if 'poll_category' in request.POST and request.POST['poll_category']:
-            category = \
-                     Category.objects.get(id=int(request.POST['poll_category']))
-        public = False
-        if 'poll_public' in request.POST and request.POST['poll_public']:
-            value = False
-            if request.POST['poll_public'] == '1':
-                value = True
-            public = value
-        poll = Poll(name=request.POST['poll_name'],
-description=request.POST['poll_desc'], author=author, base_url=base_url,
-admin_url=admin_url, type=request.POST['poll_type'], category=category,
-public=public)
-        poll.save()
-        url = response_dct['admin_url'] + '/%s/' % poll.admin_url
-        return response_dct, HttpResponseRedirect(url)
-
-    def getAndUpdateExistingPoll(request, response_dct, admin_url):
-        "Get an existing poll"
-        try:
-            poll = Poll.objects.filter(admin_url=admin_url)[0]
-        except IndexError:
-            # if the poll don't exist redirect to the creation page
-            url = response_dct['admin_url'] + '/0/'
-            return response_dct, HttpResponseRedirect(url)
-        # update the poll
-        updated = None
-        if 'poll_name' in request.POST and request.POST['poll_name']:
-            updated = True
-            poll.name = request.POST['poll_name']
-        if 'poll_desc' in request.POST and request.POST['poll_desc']:
-            updated = True
-            poll.description = request.POST['poll_desc']
-        if 'poll_open' in request.POST and request.POST['poll_open']:
-            updated = True
-            value = False
-            if request.POST['poll_open'] == '1':
-                value = True
-            poll.open = value
-        if 'poll_public' in request.POST and request.POST['poll_public']:
-            updated = True
-            value = False
-            if request.POST['poll_public'] == '1':
-                value = True
-            poll.public = value
-        if updated:
-            poll.save()
-        # base feed of the template
-        new_dct = {'poll':poll,
-          'choices':Choice.objects.filter(poll=poll).order_by('order'),
-          'type_name':poll.getTypeLabel()}
-        response_dct.update(new_dct)
-
-        # urls
-        base_path = request.META['HTTP_HOST'] + \
-                    "/".join(request.path.split('/')[:-3])
-        response_dct['base_url'] = poll.base_url
-        response_dct['full_base_url'] = base_path + "/poll/" \
-                                   + poll.base_url + "/"
-        response_dct['admin_url'] += '/%s/' % poll.admin_url
-        response_dct['full_admin_url'] = base_path + "/edit/" \
-                                         + admin_url + "/"
-
-        # if a new choice is submitted
-        if 'new_choice' in request.POST and request.POST['new_choice']:
-            try:
-                order = Choice.objects.order_by('-order')[0].order
-                order += 1
-            except IndexError:
-                order = 0
-            limit = None
-            if 'limit' in request.POST:
-                try:
-                    limit = int(request.POST['limit'])
-                except ValueError:
-                    # non numeric limit given : no limit set
-                    pass
-            choice = Choice(poll=poll, name=request.POST['new_choice'],
-                            order=order, limit=limit)
-            choice.save()
-        # check if the order of a choice has to be changed
-        for key in request.GET:
-            try:
-                if 'up_choice' in key:
-                    choice = Choice.objects.get(id=int(request.GET[key]))
-                    choice.changeOrder(-1)
-                    # redirect in order to avoid a change with a refresh
-                    url = response_dct['admin_url']
-                    return response_dct, HttpResponseRedirect(url)
-                if 'down_choice' in key:
-                    choice = Choice.objects.get(id=int(request.GET[key]))
-                    choice.changeOrder(1)
-                    # redirect in order to avoid a change with a refresh
-                    url = response_dct['admin_url']
-                    return response_dct, HttpResponseRedirect(url)
-            except (ValueError, Choice.DoesNotExist):
-                pass
-        # check if a choice has been choosen for deletion or for modification
-        for key in request.POST:
-            if key.startswith('delete_') and request.POST[key]:
-                choice = Choice.objects.get(id=int(key[len('delete_'):]))
-                Vote.objects.filter(choice=choice).delete()
-                choice.delete()
-            if key.startswith('modify_') and request.POST[key]:
-                try:
-                    choice = Choice.objects.get(id=int(key[len('modify_'):]))
-                    choice.name = request.POST[key]
-                    choice.save()
-                except Choice.DoesNotExist:
-                    # throw when want to modify a deleted choice
-                    pass
-
-            if key.startswith('limit_'):
-                try:
-                    choice = Choice.objects.get(id=int(key[len('limit_'):]))
-                    if not request.POST[key]:
-                        choice.limit = None
-                        choice.save()
-                    else:
-                        try:
-                            new_limit = int(request.POST[key])
-                            sum = choice.getSum()
-                            if new_limit < sum:
-                                response_dct['error'] = _("You cannot lower \
-%(name)s's limit to this number : there is currently %(sum)d votes for this \
-choice.") % {'name':choice.name, 'sum':sum}
-                            else:
-                                choice.limit = new_limit
-                                choice.save()
-                        except ValueError:
-                            response_dct['error'] = _("Non-numeric value for \
-limit")
-                except Choice.DoesNotExist:
-                    # throw when want to modify a deleted choice
-                    pass
-        return response_dct, None
-
+def editChoicesAdmin(request, admin_url):
     response_dct, redirect = getBaseResponse(request)
     if redirect:
         return redirect
-    response_dct['TYPES'] = Poll.TYPE
-    response_dct['categories'] = Category.objects.all()
-    response_dct['admin_url'] = \
-                         "/".join(request.path.split('/')[:-2])
-    redirection = None
-    if 'new' in request.POST:
-        # new poll is submited
-        response_dct, redirection = submitNewPoll(request, response_dct)
-    elif admin_url == '0':
-        # new empty poll
-        response_dct['new'] = True
-        response_dct['admin_url'] += '/0/'
-    else:
-        # existing poll
-        response_dct, redirection = getAndUpdateExistingPoll(request,
-                                               response_dct, admin_url)
-    if redirection:
-        return redirection
-    return render_to_response('createOrEdit.html', response_dct)
+    try:
+        poll = Poll.objects.filter(admin_url=admin_url)[0]
+    except IndexError:
+        # if the poll don't exist redirect to the main page
+        url = "/".join(request.path.split('/')[:-2])
+        return response_dct, HttpResponseRedirect(url)
+    response_dct['poll'] = poll
+    return editChoices(request, response_dct, admin=True)
 
+def editChoicesUser(request, poll_url):
+    response_dct, redirect = getBaseResponse(request)
+    if redirect:
+        return redirect
+    try:
+        poll = Poll.objects.filter(poll_url=poll_url)[0]
+    except IndexError:
+        poll = None
+    if not poll or not poll.opened_admin:
+        # if the poll don't exist redirect to the main page
+        url = "/".join(request.path.split('/')[:-2])
+        return HttpResponseRedirect(url)
+    response_dct['poll'] = poll
+    return editChoices(request, response_dct)
+
+def editChoices(request, response_dct, admin=False):
+    '''Edition of choices.
+    '''
+    poll = response_dct['poll']
+    tpl = 'editChoicesAdmin.html'
+    if not admin:
+        tpl = 'editChoicesUser.html'
+    Form = ChoiceForm
+    if poll.dated_choices:
+        Form = DatedChoiceForm
+    try:
+        order = Choice.objects.order_by('-order')[0].order
+        order += 1
+    except IndexError:
+        order = 0
+    form = Form(initial={'poll':poll.id, 'order':str(order)})
+
+    if request.method == 'POST':
+        # if a new choice is submitted
+        if 'add' in request.POST and request.POST['poll'] == str(poll.id):
+            f = Form(request.POST)
+            if f.is_valid():
+                choice = f.save()
+                poll.reorder()
+            else:
+                form = f
+        if admin and 'edit' in request.POST \
+           and request.POST['poll'] == str(poll.id):
+            try:
+                choice = Choice.objects.get(id=int(request.POST['edit']))
+                if choice.poll != poll:
+                    raise ValueError
+                f = Form(request.POST, instance=choice)
+                if f.is_valid():
+                    choice = f.save()
+                    poll.reorder()
+            except (Choice.DoesNotExist, ValueError):
+                pass
+        if admin:
+            # check if a choice has been choosen for deletion
+            for key in request.POST:
+                if key.startswith('delete_') and request.POST[key]:
+                    try:
+                        choice = Choice.objects.get(id=int(key[len('delete_'):]))
+                        if choice.poll != poll:
+                            raise ValueError
+                        Vote.objects.filter(choice=choice).delete()
+                        choice.delete()
+                    except (Choice.DoesNotExist, ValueError):
+                        pass
+    # check if the order of a choice has to be changed
+    if admin and request.method == 'GET':
+        for key in request.GET:
+            try:
+                current_url = request.path.split('?')[0]
+                if 'up_choice' in key:
+                    choice = Choice.objects.get(id=int(request.GET[key]))
+                    if choice.poll != poll:
+                        raise ValueError
+                    choice.changeOrder(-1)
+                    poll.reorder()
+                    # redirect in order to avoid a change with a refresh
+                    return HttpResponseRedirect(current_url)
+                if 'down_choice' in key:
+                    choice = Choice.objects.get(id=int(request.GET[key]))
+                    if choice.poll != poll:
+                        raise ValueError
+                    choice.changeOrder(1)
+                    poll.reorder()
+                    # redirect in order to avoid a change with a refresh
+                    return HttpResponseRedirect(current_url)
+            except (ValueError, Choice.DoesNotExist):
+                pass
+    choices = Choice.objects.filter(poll=poll).order_by('order')
+    for choice in choices:
+        if poll.dated_choices:
+            choice.name = datetime.strptime(choice.name, '%Y-%m-%d %H:%M:%S')
+        choice.form = Form(instance=choice)
+    response_dct['choices'] = choices
+    response_dct['form_new_choice'] = form
+    return render_to_response(tpl, response_dct)
 
 def poll(request, poll_url):
     """Display a poll

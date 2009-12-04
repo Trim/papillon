@@ -21,10 +21,13 @@
 Forms management
 '''
 
+from datetime import datetime
+
 from django import forms
 from django.contrib.admin import widgets as adminwidgets
+from django.utils.translation import gettext_lazy as _
 
-from papillon.polls.models import Poll, Category
+from papillon.polls.models import Poll, Category, Choice
 from papillon import settings
 
 class TextareaWidget(forms.Textarea):
@@ -34,7 +37,6 @@ class TextareaWidget(forms.Textarea):
     class Media:
         js = ["%stiny_mce.js" % settings.TINYMCE_URL,
               "%stextareas.js" % settings.MEDIA_URL,]
-
 
 class PollForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -59,3 +61,57 @@ class AdminPollForm(PollForm):
     def __init__(self, *args, **kwargs):
         super(AdminPollForm, self).__init__(*args, **kwargs)
         self.fields['enddate'].widget = adminwidgets.AdminSplitDateTime()
+
+class ChoiceForm(forms.ModelForm):
+    class Meta:
+        model = Choice
+        fields = ('name', 'limit', 'poll', 'order')
+    def __init__(self, *args, **kwargs):
+        super(ChoiceForm, self).__init__(*args, **kwargs)
+        self.fields['poll'].widget = forms.HiddenInput()
+        self.fields['order'].widget = forms.HiddenInput()
+
+class DatedChoiceForm(ChoiceForm):
+    def __init__(self, *args, **kwargs):
+        super(DatedChoiceForm, self).__init__(*args, **kwargs)
+        self.fields['name'].widget = adminwidgets.AdminSplitDateTime()
+
+    def clean_name(self):
+        try:
+            poll_id = self.data['poll']
+            poll = Poll.objects.get(id=int(poll_id))
+        except (ValueError, Poll.DoesNotExist):
+            raise forms.ValidationError(_('Invalid poll'))
+        data = self.cleaned_data['name']
+        if poll.dated_choices:
+            # management of dates fields
+            if data.startswith('[') and data.endswith(']') and "'" in data:
+                datas = data.split("'")
+                try:
+                    assert len(datas) == 5
+                    time = datas[3]
+                    if not time:
+                        time = '00:00:00'
+                    date = "%s %s" % (datas[1], time)
+                    datetime.strptime(date, '%Y-%m-%d %H:%M:%S') 
+                    data = date
+                except (ValueError, AssertionError):
+                    raise forms.ValidationError(_('Invalid date format: \
+YYYY-MM-DD HH:MM:SS'))
+        return data
+
+    def clean_limit(self):
+        """
+        data = eval(self.cleaned_data['name'])
+        
+                            new_limit = int(request.POST[key])
+                            sum = choice.getSum()
+                            if new_limit < sum:
+                                response_dct['error'] = _("You cannot lower \
+%(name)s's limit to this number : there is currently %(sum)d votes for this \
+choice.") % {'name':choice.name, 'sum':sum}
+                            else:
+                                choice.limit = new_limit
+                                choice.save()
+"""
+        pass

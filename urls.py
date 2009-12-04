@@ -28,13 +28,17 @@ feeds = {
 }
 
 urlpatterns = patterns('',
-     (r'^papillon/admin/(.*)', admin.site.root),
      (r'^papillon/admin/doc/', include('django.contrib.admindocs.urls')),
      (r'^papillon/admin/jsi18n/$', 'django.views.i18n.javascript_catalog'),
+     (r'^papillon/admin/(.*)', admin.site.root),
      (r'^papillon/$', 'papillon.polls.views.index'),
      (r'^papillon/create$', 'papillon.polls.views.create'),
      (r'^papillon/edit/(?P<admin_url>\w+)/$',
             'papillon.polls.views.edit'),
+     (r'^papillon/editChoicesAdmin/(?P<admin_url>\w+)/$',
+            'papillon.polls.views.editChoicesAdmin'),
+     (r'^papillon/editChoicesUser/(?P<poll_url>\w+)/$',
+            'papillon.polls.views.editChoicesUser'),
      (r'^papillon/category/(?P<category_id>\w+)/$',
             'papillon.polls.views.category'),
      (r'^papillon/poll/(?P<poll_url>\w+)/$', 'papillon.polls.views.poll'),

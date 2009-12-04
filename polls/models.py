@@ -56,7 +56,8 @@ modify the current poll"))
     category = models.ForeignKey(Category, null=True, blank=True)
     TYPE = (('P', _('Yes/No poll')),
             ('B', _('Yes/No/Maybe poll')),
-            ('O', _('One choice poll')),)
+            ('O', _('One choice poll')),
+            ('V', _('Valuable choice poll')),)
     type = models.CharField(max_length=1, choices=TYPE,
                       verbose_name=_("Type of the poll"),
                       help_text=_("""Type of the poll:
@@ -64,6 +65,8 @@ modify the current poll"))
  - "Yes/No poll" is the appropriate type for a simple multi-choice poll
  - "Yes/No/Maybe poll" allows voters to stay undecided
  - "One choice poll" gives only one option to choose from
+ - "Valuable choice poll" permit users to give a note between 0 to 10 to \
+different choices
 """))
     dated_choices = models.BooleanField(verbose_name=_("Choices are dates"),
         default=False, help_text=_("Check this option to choose between dates"))
@@ -112,6 +115,19 @@ the poll/check the poll to reopen it"))
         """
         Get choices associated to this vote"""
         return Choice.objects.filter(poll=self)
+
+    def reorder(self):
+        """
+        Reorder choices of the poll"""
+        if not self.dated_choices:
+            return
+        choices = self.getChoices()
+        sort_fct = lambda x:datetime.datetime.strptime(x.name,
+                                                       '%Y-%m-%d %H:%M:%S')
+        choices = sorted(choices, key=sort_fct)
+        for idx, choice in enumerate(choices):
+            choice.order = idx
+            choice.save()
 
     class Admin:
         pass

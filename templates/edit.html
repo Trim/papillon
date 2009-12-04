@@ -10,18 +10,13 @@
 {% endblock %}
 
 {% block content %}
- {% if not choices %}
- <p class='error'>{% blocktrans %}As long as no options were added to the poll, 
-it will not be made available.{% endblocktrans %}</p>
- {% endif %}
-
  <h2>{% trans "Edit poll" %}</h2>
 <form action="" method="post">
 <table class='new_poll'>
   <tr>
    <td><label>{% trans "Poll url" %}</label></td>
    <td>
-<a href='http://{{root_url}}edit/{{poll.base_url}}'>http://{{root_url}}edit/{{poll.base_url}}</a>
+<a href='http://{{root_url}}poll/{{poll.base_url}}'>http://{{root_url}}poll/{{poll.base_url}}</a>
    </td>
    <td class='form_description'><p>
 {% trans "Copy this address and send it to voters who want to participate to this poll" %}
@@ -30,10 +25,19 @@ it will not be made available.{% endblocktrans %}</p>
   <tr>
    <td><label>{% trans "Administration url" %}</label></td>
    <td>
-<a href='http://{{root_url}}poll/{{poll.admin_url}}'>http://{{root_url}}poll/{{poll.admin_url}}</a>
+<a href='http://{{root_url}}edit/{{poll.admin_url}}'>http://{{root_url}}edit/{{poll.admin_url}}</a>
    </td>
    <td class='form_description'><p>
    {% trans "Address to modify the current poll" %}
+   </p></td>
+  </tr>
+  <tr>
+   <td><label>{% trans "Choices administration url" %}</label></td>
+   <td>
+<a href='http://{{root_url}}editChoicesAdmin/{{poll.admin_url}}'>http://{{root_url}}editChoicesAdmin/{{poll.admin_url}}</a>
+   </td>
+   <td class='form_description'><p>
+   {% trans "Address to modify choices of the current poll." %}
    </p></td>
   </tr>
   {% for field in form %}
@@ -51,33 +55,6 @@ it will not be made available.{% endblocktrans %}</p>
   <tr>
    <td></td>
    <td><input type='submit' value='{% trans "Edit" %}' class='submit'/></td>
-  </tr>
-</table>
-</form>
-
-<h2>{% trans "Choices" %}</h2>
-{% if choices %}<form action="{{admin_url}}" method="post">
-<table class='new_poll'>
-  <tr>
-   <th>{% trans "Up/down" %}</th><th>{% trans "Label" %}</th><th>{% trans "Limit" %}</th><th>{% trans "Delete?"%}</th>
-  </tr>
-  {% for choice in choices %}<tr>
-   <td><a href='?up_choice={{choice.id}}' class='arrow'>+</a> / <a href='?down_choice={{choice.id}}' class='arrow'>-</a></td><td><input type='text' name='modify_{{choice.id}}' value="{{choice.name}}"/></td><td>{% trans "Limited to"%} <input type='text' name='limit_{{choice.id}}' class='limit'{%if choice.limit%} value='{{choice.limit}}'{%endif%}/> {% trans "vote(s)" %}</td><td><input type='checkbox' name='delete_{{choice.id}}'/></td>
-  </tr>{% endfor %}
-  <tr>
-   <td></td>
-   <td><input type='hidden' name='edit' value='1'/>
-   <input type='submit' value='{% trans "Edit" %}' class='submit'/></td>
-  </tr>
-</table>
-</form>{% endif %}
-
-<form action="{{admin_url}}" method="post">
-<table class='new_poll'>
-  <tr><td><label>{% trans "New choice" %}</label></td><td><input type='text' name='new_choice'/></td><td>{%trans "Limited to"%} <input type='text' name='limit' class='limit'/> {%trans "vote(s)"%}</td><td class='form_description'>{% trans "Setting a new choice. Optionally you can set a limit of vote for this choice. This limit is usefull for limited resources allocation." %}</td></tr>
-  <tr>
-   <td></td>
-   <td><input type='hidden' name='add' value='1'/> <input type='submit' value='{% trans "Add" %}' class='submit'/></td>
   </tr>
 </table>
 </form>
