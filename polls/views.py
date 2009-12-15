@@ -91,6 +91,8 @@ def create(request):
         return url
 
     response_dct, redirect = getBaseResponse(request)
+    if redirect:
+        return redirect
 
     if request.method == 'POST':
         form = CreatePollForm(request.POST)
@@ -110,6 +112,8 @@ def edit(request, admin_url):
     '''Edition of a poll.
     '''
     response_dct, redirect = getBaseResponse(request)
+    if redirect:
+        return redirect
     try:
         poll = Poll.objects.filter(admin_url=admin_url)[0]
     except IndexError:
