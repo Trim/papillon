@@ -3,9 +3,9 @@
 {% load get_range %}
 
 {% block fullscript %}
-<script type="text/javascript" src="http://{{root_url}}admin/jsi18n/"></script>
-<script type="text/javascript" src="http://{{root_url}}media/js/core.js"></script>
-<script type="text/javascript" src="http://{{root_url}}media/js/admin/RelatedObjectLookups.js"></script>
+<script type="text/javascript" src="{{root_url}}admin/jsi18n/"></script>
+<script type="text/javascript" src="{{root_url}}media/js/core.js"></script>
+<script type="text/javascript" src="{{root_url}}media/js/admin/RelatedObjectLookups.js"></script>
 {{ form_comment.media }}
 {% endblock %}
 
@@ -119,10 +119,10 @@
  <hr class='spacer'/>
  </form>
  {%if poll.opened_admin%}
- <p><a href="http://{{root_url}}editChoicesUser/{{poll.base_url}}/">{%trans "Add a new choice to this poll?"%}</a></p>{%endif%}
+ <p><a href="{{root_url}}editChoicesUser/{{poll.base_url}}/">{%trans "Add a new choice to this poll?"%}</a></p>{%endif%}
  <div class='footnote'>
  {%if hide_vote%}<p>{% trans "You have already vote? You are enough wise not to be influenced by other votes? You can display result by clicking" %} <a href='?display_result=1'>{% trans "here" %}</a>.</p>{%else%}
- <p>{% trans "Remain informed of poll evolution:" %} <a href="http://{{root_url}}feeds/poll/{{poll.base_url}}/">{%trans "syndication"%}</a></p>{%endif%}
+ <p>{% trans "Remain informed of poll evolution:" %} <a href="{{root_url}}feeds/poll/{{poll.base_url}}/">{%trans "syndication"%}</a></p>{%endif%}
  </div>
 {%if not hide_vote%}
 <h3>{%trans "Comments"%}</h3>

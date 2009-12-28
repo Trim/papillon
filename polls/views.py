@@ -40,9 +40,7 @@ def getBaseResponse(request):
     """Manage basic fields for the template
     If not null the second argument returned is a redirection.
     """
-    #Get the root url in order to redirect to the main page
-    url = "/".join([request.META['HTTP_HOST'],
-                    request.path.split('/')[1], ''])
+    url = BASE_SITE
     # setting the current language and available languages
     if 'language' in request.GET:
         if request.GET['language'] in [language[0] for language in LANGUAGES]:

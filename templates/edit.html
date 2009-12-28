@@ -3,9 +3,9 @@
 {% load i18n %}
 
 {% block fullscript %}
-<script type="text/javascript" src="http://{{root_url}}admin/jsi18n/"></script>
-<script type="text/javascript" src="http://{{root_url}}media/js/core.js"></script>
-<script type="text/javascript" src="http://{{root_url}}media/js/admin/RelatedObjectLookups.js"></script>
+<script type="text/javascript" src="{{root_url}}admin/jsi18n/"></script>
+<script type="text/javascript" src="{{root_url}}media/js/core.js"></script>
+<script type="text/javascript" src="{{root_url}}media/js/admin/RelatedObjectLookups.js"></script>
 {{ form.media }}
 {% endblock %}
 
@@ -16,7 +16,7 @@
   <tr>
    <td><label>{% trans "Poll url" %}</label></td>
    <td>
-<a href='http://{{root_url}}poll/{{poll.base_url}}'>http://{{root_url}}poll/{{poll.base_url}}</a>
+<a href='{{root_url}}poll/{{poll.base_url}}'>{{root_url}}poll/{{poll.base_url}}</a>
    </td>
    <td class='form_description'><p>
 {% trans "Copy this address and send it to voters who want to participate to this poll" %}
@@ -25,7 +25,7 @@
   <tr>
    <td><label>{% trans "Administration url" %}</label></td>
    <td>
-<a href='http://{{root_url}}edit/{{poll.admin_url}}'>http://{{root_url}}edit/{{poll.admin_url}}</a>
+<a href='{{root_url}}edit/{{poll.admin_url}}'>{{root_url}}edit/{{poll.admin_url}}</a>
    </td>
    <td class='form_description'><p>
    {% trans "Address to modify the current poll" %}
@@ -34,7 +34,7 @@
   <tr>
    <td><label>{% trans "Choices administration url" %}</label></td>
    <td>
-<a href='http://{{root_url}}editChoicesAdmin/{{poll.admin_url}}'>http://{{root_url}}editChoicesAdmin/{{poll.admin_url}}</a>
+<a href='{{root_url}}editChoicesAdmin/{{poll.admin_url}}'>{{root_url}}editChoicesAdmin/{{poll.admin_url}}</a>
    </td>
    <td class='form_description'><p>
    {% trans "Address to modify choices of the current poll." %}

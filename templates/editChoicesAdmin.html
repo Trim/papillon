@@ -3,9 +3,9 @@
 {% load i18n %}
 
 {% block fullscript %}
-<script type="text/javascript" src="http://{{root_url}}admin/jsi18n/"></script>
-<script type="text/javascript" src="http://{{root_url}}media/js/core.js"></script>
-<script type="text/javascript" src="http://{{root_url}}media/js/admin/RelatedObjectLookups.js"></script>
+<script type="text/javascript" src="{{root_url}}admin/jsi18n/"></script>
+<script type="text/javascript" src="{{root_url}}media/js/core.js"></script>
+<script type="text/javascript" src="{{root_url}}media/js/admin/RelatedObjectLookups.js"></script>
 {{ form_new_choice.media }}
 {% endblock %}
 
@@ -14,7 +14,7 @@
 {% blocktrans %}As long as no options were added to the poll, it will not be available.{% endblocktrans %}
 </p>{% else %}
 <h2>{% trans "Complete/Finalise the poll" %}</h2>
-<p><a href='http://{{root_url}}edit/{{poll.admin_url}}'><button>{% trans "Next"%}</button></p>
+<p><a href='{{root_url}}edit/{{poll.admin_url}}'><button>{% trans "Next"%}</button></p>
 {% endif %}
 {% include 'editChoices.html' %}
 {% if choices %}
