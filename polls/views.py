@@ -99,7 +99,7 @@ def create(request):
             poll.admin_url = genRandomURL()
             poll.base_url = genRandomURL()
             poll.save()
-            return HttpResponseRedirect('http://%seditChoicesAdmin/%s/' % (
+            return HttpResponseRedirect('%seditChoicesAdmin/%s/' % (
                             response_dct['root_url'], poll.admin_url))
     else:
         form = CreatePollForm()
@@ -117,7 +117,7 @@ def edit(request, admin_url):
     except IndexError:
         # if the poll don't exist redirect to the creation page
         url = response_dct['root_url']
-        return HttpResponseRedirect('http://%screate' % (
+        return HttpResponseRedirect('%screate' % (
                             response_dct['root_url']))
     Form = AdminPollForm
 
@@ -125,7 +125,7 @@ def edit(request, admin_url):
         form = Form(request.POST, instance=poll)
         if form.is_valid():
             poll = form.save()
-            return HttpResponseRedirect('http://%sedit/%s/' % (
+            return HttpResponseRedirect('%sedit/%s/' % (
                             response_dct['root_url'], poll.admin_url))
     else:
         form = Form(instance=poll)
