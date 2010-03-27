@@ -1,0 +1,5 @@
+#!/bin/sh
+txt2tags --encoding utf-8 --css-sugar --style style.css --toc -t xhtml -o INSTALL.html INSTALL.t2t
+txt2tags --encoding utf-8 --toc -t txt -o INSTALL INSTALL.t2t
+awk '{gsub("\t","   ");print}' INSTALL > ../INSTALL
+rm INSTALL
