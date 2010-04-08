@@ -1,0 +1,143 @@
+Chimère installation
+Étienne Loks
+Last update: %%date(%m-%d-%Y)
+
++ Installation +
+
+++ Prerequisites ++
+
+- [python http://www.python.org/] versions 2.5, 2.6 or 2.3, 2.4 with [pysqlite http://oss.itsystementwicklung.de/trac/pysqlite/]
+- [python-markdown http://sourceforge.net/projects/python-markdown/]
+- [django http://www.djangoproject.com/] version 1.0
+- [apache http://www.apache.org/] 2.x with [mod_python http://www.modpython.org/ 3.x]
+- [gettext http://www.gnu.org/software/gettext/]
+
+
+The simple way to obtain theses elements is to get package from your favourite linux distribution (i.e. packages python, python-django, python-markdown, gettext, apache2 and libapache2-mod-python in Debian Lenny). Otherwise refer to the sites of these applications.
+
++++ Getting the sources +++
+
+The last "stable" version is available in this [directory http://www.peacefrogs.net/download/].
+
+Another solution is to get the last subversion version (inside /var/local/django/papillon if you want to strictly follow this HOWTO):
+
+```
+svn co http://www.peacefrogs.net/svn/papillon/papillon/trunk/ .
+```
+
+++ Install the sources ++
+
+If necessary unpack then move the sources in a directory readable to the apache user (www-data in Debian).
+
+```
+sudo mkdir /var/local/django
+cd /var/local/django
+sudo tar xvjf /home/etienne/papillon-last.tar.bz2
+cd /var/local/django/papillon
+sudo chown -R etienne:www-data papillon
+```
+
+Modify the file settings.py and initialize variables ROOT_PATH, SERVER_URL and EXTRA_URL depending on your configuration:
+
+```
+cd papillon
+vim settings.py
+####
+ROOT_PATH = '/var/local/django/papillon/papillon' # path to the installation of django code of Papillon 
+SERVER_URL = 'http://www.peacefrogs.net/' # site path
+EXTRA_URL = 'papillon/' # extra_url path
+BASE_SITE = SERVER_URL + EXTRA_URL 
+####
+```
+
+If you want to use a database other than sqlite ([postgresql http://www.postgresql.org/] or [mysql http://www.mysql.com/]) configure your database and set by the various fields beginning with DATABASE.
+
+In the directory Papillon, put up a symbolic link to the basic styles django (change the path depending on your installation of django):
+
+```
+ln -s /usr/share/python-support/python-django/django/contrib/admin/media/ .
+```
+
+Modify urls.py. At line:
+
+```
+(r'^papillon/static/(?P<path>.*)$', 'django.views.static.serve',
+                                 {'document_root': 'static/'}),
+```
+
+Modify static/ by the local path to static content (for instance /var/local/django/papillon/papillon/static).
+
+
+++ Database initialisation ++
+
+In the directory Papillon simply:
+
+```
+./manage.py syncdb
+```
+
+Answer the questions to create an administrator (administration pages can be found at: http://where_is_papillon/admin) and the base is set.
+If you use sqlite (default database) give the write rights on the database file to the apache user:
+
+```
+chmod g+w papillon.db
+chmod g+w .
+```
+
+++ Compiling languages ++
+
+If your language is available in the locale directory of Papillon, you will just need to get it compiled. Still being in the papillon directory, this can be done with (here, "de" stands for german. Replace it with the appropriate language code) :
+
+```
+django-admin compilemessages -l de
+```
+
+If your language is not available, feel free to create the default po files and to submit it, contributions are well appreciated. Procedure is as follows :
+
+You first need to create the default po file (of course, replace "de" according to the language you chose to create) :
+
+```
+django-admin makemessages -l de
+```
+
+There should now be a django.po file in locale/de/LC_MESSAGES. Complete it with your translation.
+
+Now that the translation file is completed, just compile it the same way you would have if the language file was already available.
+
+++ Apache configuration ++
+
+Create and edit a configuration file for Papillon.
+
+```
+sudo vim /etc/apache2/sites-available/papillon
+```
+
+Insert Apache directives for your installation.
+
+```
+# part of the address after the root of your site
+<Location "/papillon/">
+# directory path to the father of the installation of Papillon
+PythonPath "['/var/local/django/papillon/'] + sys.path"
+SetHandler python-program
+PythonHandler django.core.handlers.modpython
+SetEnv DJANGO_SETTINGS_MODULE papillon.settings
+# set it to on or off if in test or production environment
+PythonDebug On
+# put differents interpreter names if you deploy several Papillon
+PythonInterpreter papillon
+</Location>
+```
+
+Active this site, reload Apache and now your Papillon "can fly".
+
+```
+sudo a2ensite papillon
+sudo /etc/init.d/apache2 reload
+```
+
+++ Post-installation ++
+
+To configure categories go to the administration interface at http://where_is_papillon/admin .
+
+

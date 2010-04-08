@@ -6,8 +6,8 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-ROOT_PATH = '/var/local/django/papillon/'
-SERVER_URL = 'http://localhost:8000/'
+ROOT_PATH = '/var/local/django/papillon/papillon/'
+SERVER_URL = 'http://localhost/'
 EXTRA_URL = 'papillon/'
 BASE_SITE = SERVER_URL + EXTRA_URL
 
