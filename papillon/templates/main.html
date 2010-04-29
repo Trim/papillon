@@ -10,7 +10,7 @@
 {% for poll in polls %}
 <div class='poll-description'>
  <p><a href='poll/{{poll.base_url}}'>{{poll.name}}</a></p>
- <p>{{poll.description}}</p>
+ <p>{{poll.description|safe}}</p>
 </div>
 {% endfor %}
 
