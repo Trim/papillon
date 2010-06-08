@@ -7,13 +7,16 @@ Last update: %%date(%m-%d-%Y)
 ++ Prerequisites ++
 
 - [python http://www.python.org/] versions 2.5, 2.6 or 2.3, 2.4 with [pysqlite http://oss.itsystementwicklung.de/trac/pysqlite/]
-- [python-markdown http://sourceforge.net/projects/python-markdown/]
 - [django http://www.djangoproject.com/] version 1.0
 - [apache http://www.apache.org/] 2.x with [mod_python http://www.modpython.org/ 3.x]
 - [gettext http://www.gnu.org/software/gettext/]
 
 
 The simple way to obtain theses elements is to get package from your favourite linux distribution (i.e. packages python, python-django, python-markdown, gettext, apache2 and libapache2-mod-python in Debian Lenny). Otherwise refer to the sites of these applications.
+
+Optionnal requesite:
+
+- [tinymce http://tinymce.moxiecode.com/]: Javascript WYSIWYG Editor. If you want to use it don't forget to edit TINYMCE_URL in settings.py.
 
 +++ Getting the sources +++
 
@@ -57,16 +60,6 @@ In the directory Papillon, put up a symbolic link to the basic styles django (ch
 ```
 ln -s /usr/share/python-support/python-django/django/contrib/admin/media/ .
 ```
-
-Modify urls.py. At line:
-
-```
-(r'^papillon/static/(?P<path>.*)$', 'django.views.static.serve',
-                                 {'document_root': 'static/'}),
-```
-
-Modify static/ by the local path to static content (for instance /var/local/django/papillon/papillon/static).
-
 
 ++ Database initialisation ++
 
@@ -127,6 +120,23 @@ PythonDebug On
 # put differents interpreter names if you deploy several Papillon
 PythonInterpreter papillon
 </Location>
+```
+
+Or if you want to use a virtual domain:
+
+```
+<VirtualHost *:80>
+ServerName papillon.youdomain.net
+# directory path to the father of the installation of Papillon
+PythonPath "['/var/local/django/papillon/'] + sys.path"
+SetHandler python-program
+PythonHandler django.core.handlers.modpython
+SetEnv DJANGO_SETTINGS_MODULE papillon.settings
+# set it to on or off if in test or production environment
+PythonDebug On
+# put differents interpreter names if you deploy several Papillon
+PythonInterpreter papillion
+</VirtualHost>
 ```
 
 Active this site, reload Apache and now your Papillon "can fly".
