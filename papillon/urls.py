@@ -17,6 +17,8 @@
 
 # See the file COPYING for details.
 
+import settings
+
 from django.conf.urls.defaults import *
 from django.contrib import admin
 admin.autodiscover()
@@ -27,27 +29,28 @@ feeds = {
     'poll': PollLatestEntries,
 }
 
+base = '^' + settings.EXTRA_URL[:-1]
+
 urlpatterns = patterns('',
-     (r'^papillon/admin/doc/', include('django.contrib.admindocs.urls')),
-     (r'^papillon/admin/jsi18n/$', 'django.views.i18n.javascript_catalog'),
-     (r'^papillon/admin/(.*)', admin.site.root),
-     (r'^papillon/$', 'papillon.polls.views.index'),
-     (r'^papillon/create$', 'papillon.polls.views.create'),
-     (r'^papillon/edit/(?P<admin_url>\w+)/$',
+     (base + r'admin/doc/', include('django.contrib.admindocs.urls')),
+     (base + r'admin/jsi18n/$', 'django.views.i18n.javascript_catalog'),
+     (base + r'admin/(.*)', admin.site.root),
+     (base + r'$', 'papillon.polls.views.index'),
+     (base + r'create$', 'papillon.polls.views.create'),
+     (base + r'edit/(?P<admin_url>\w+)/$',
             'papillon.polls.views.edit'),
-     (r'^papillon/editChoicesAdmin/(?P<admin_url>\w+)/$',
+     (base + r'editChoicesAdmin/(?P<admin_url>\w+)/$',
             'papillon.polls.views.editChoicesAdmin'),
-     (r'^papillon/editChoicesUser/(?P<poll_url>\w+)/$',
+     (base + r'editChoicesUser/(?P<poll_url>\w+)/$',
             'papillon.polls.views.editChoicesUser'),
-     (r'^papillon/category/(?P<category_id>\w+)/$',
+     (base + r'category/(?P<category_id>\w+)/$',
             'papillon.polls.views.category'),
-     (r'^papillon/poll/(?P<poll_url>\w+)/$', 'papillon.polls.views.poll'),
-     (r'^papillon/poll/(?P<poll_url>\w+)/vote$', 'papillon.polls.views.poll'),
-     (r'^papillon/feeds/(?P<url>.*)$',
+     (base + r'poll/(?P<poll_url>\w+)/$', 'papillon.polls.views.poll'),
+     (base + r'poll/(?P<poll_url>\w+)/vote$', 'papillon.polls.views.poll'),
+     (base + r'feeds/(?P<url>.*)$',
                  'django.contrib.syndication.views.feed', {'feed_dict': feeds}),
-     (r'^papillon/static/(?P<path>.*)$', 'django.views.static.serve',
-                                {'document_root': '/var/local/django/papillon/papillon/static'}),
-     (r'^papillon/media/(?P<path>.*)$', 'django.views.static.serve',
-                                {'document_root': 'media/'}),
-     (r'^papillon/tinymce/', include('tinymce.urls')),
+     (base + r'static/(?P<path>.*)$', 'django.views.static.serve',
+                                {'document_root': settings.ROOT_PATH + 'static'}),
+     (base + r'media/(?P<path>.*)$', 'django.views.static.serve',
+                                {'document_root': settings.ROOT_PATH + 'media/'}),
 )
