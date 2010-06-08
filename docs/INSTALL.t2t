@@ -40,7 +40,7 @@ cd /var/local/django/papillon
 sudo chown -R etienne:www-data papillon
 ```
 
-Modify the file settings.py and initialize variables ROOT_PATH, SERVER_URL and EXTRA_URL depending on your configuration:
+Copy settings.py.tpl to settings.py and modify settings.py by initializing at least the variables ROOT_PATH, SERVER_URL and EXTRA_URL depending on your configuration:
 
 ```
 cd papillon
