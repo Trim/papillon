@@ -455,8 +455,7 @@ def poll(request, poll_url):
             if choice.id not in choice_vote_ids:
                 vote = Vote(voter=voter, choice=choice, value=None)
                 vote.save()
-                idx = choices.index(choice)
-                voter.votes.insert(idx, vote)
+        voter.votes.sort(lambda x, y : cmp(choices.index(x.choice), choices.index(y.choice)))
     sums = [choice.getSum(poll.type == 'B') for choice in choices]
     vote_max = max(sums)
     c_idx = 0
