@@ -20,7 +20,7 @@
  <tr>
   <td class='simple'></td>
   <td class='simple'></td>
-  {% for choice in choices %}<th>{%if poll.dated_choices%}{{choice.date|date:_("DATETIME_FORMAT")}}{%else%}{{choice.name}}{%endif%}{% if choice.limit %} ({% trans "max" %} {{choice.limit}}){%endif%}</th>
+  {% for choice in choices %}<th>{%if poll.dated_choices%}{{choice.date|date:"D d M Y"}}{%else%}{{choice.name}}{%endif%}{% if choice.limit %} ({% trans "max" %} {{choice.limit}}){%endif%}</th>
  {% endfor %}</tr>
  {% if not hide_vote %}
  {% for voter in voters %}<tr{% if voter.highlight %} class='highlighted_voter'{% endif %}>
