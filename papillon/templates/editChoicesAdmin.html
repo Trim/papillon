@@ -14,7 +14,7 @@
 {% blocktrans %}As long as no options were added to the poll, it will not be available.{% endblocktrans %}
 </p>{% else %}
 <h2>{% trans "Complete/Finalise the poll" %}</h2>
-<p><a href='{{root_url}}edit/{{poll.admin_url}}'><button>{% trans "Next"%}</button></p>
+<p><a href='{{root_url}}edit/{{poll.admin_url}}'><button>{% trans "Next"%}</button></a></p>
 {% endif %}
 {% include 'editChoices.html' %}
 {% if choices %}
