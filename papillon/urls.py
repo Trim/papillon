@@ -29,7 +29,9 @@ feeds = {
     'poll': PollLatestEntries,
 }
 
-base = '^' + settings.EXTRA_URL[:-1]
+base = '^' + settings.EXTRA_URL
+if not base.endswith('/'):
+    base += '/'
 
 urlpatterns = patterns('',
      (base + r'admin/doc/', include('django.contrib.admindocs.urls')),
@@ -50,7 +52,7 @@ urlpatterns = patterns('',
      (base + r'feeds/(?P<url>.*)$',
                  'django.contrib.syndication.views.feed', {'feed_dict': feeds}),
      (base + r'static/(?P<path>.*)$', 'django.views.static.serve',
-                                {'document_root': settings.ROOT_PATH + 'static'}),
+                          {'document_root': settings.PROJECT_PATH + '/static'}),
      (base + r'media/(?P<path>.*)$', 'django.views.static.serve',
-                                {'document_root': settings.ROOT_PATH + 'media/'}),
+                          {'document_root': settings.PROJECT_PATH + '/media/'}),
 )

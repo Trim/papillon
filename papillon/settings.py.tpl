@@ -6,7 +6,9 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-ROOT_PATH = '/var/local/django/papillon/papillon/'
+import os.path
+PROJECT_PATH = os.path.dirname(os.path.abspath(__file__))
+
 SERVER_URL = 'http://localhost/'
 EXTRA_URL = 'papillon/'
 BASE_SITE = SERVER_URL + EXTRA_URL
@@ -21,12 +23,18 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
-DATABASE_NAME = ROOT_PATH + 'papillon.db'             # Or path to database file if using sqlite3.
-DATABASE_USER = ''             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+DATABASES = {
+    'default': {
+        'ENGINE': 'sqlite3',                        # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+            'NAME': PROJECT_PATH + '/papillon.db',   # Or path to database file if using sqlite3.
+            'USER': 'postgres',                     # Not used with sqlite3.
+            'PASSWORD': '',                         # Not used with sqlite3.
+            'HOST': '',                             # Set to empty string for localhost. Not used with sqlite3.
+            'PORT': '',                             # Set to empty string for default. Not used with sqlite3.
+    }
+}
+
+
 
 # Local time zone for this installation. Choices can be found here:
 # http://www.postgresql.org/docs/8.1/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
@@ -48,7 +56,7 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = ROOT_PATH + 'static/'
+MEDIA_ROOT = PROJECT_PATH + '/static/'
 
 # URL that handles the media served from MEDIA_ROOT.
 # Example: "http://media.lawrence.com"
@@ -83,16 +91,22 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    ROOT_PATH + 'templates',
+    PROJECT_PATH + '/templates',
 )
 
 INSTALLED_APPS = (
+    # contribs
     'django.contrib.auth',
     'django.contrib.admin',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.markup',
+
+    # third parties
+    'south',
+
+    # app
     'papillon.polls',
 )
 

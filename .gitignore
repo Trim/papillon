@@ -1,0 +1,4 @@
+*.pyc
+*.db
+*.swp
+papillon/settings.py
