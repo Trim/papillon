@@ -58,8 +58,10 @@ def index(request):
     response_dct, redirect = getBaseResponse(request)
     if redirect:
         return redirect
-    response_dct['polls'] = Poll.objects.filter(public=True, category=None)
-    response_dct['categories'] = Category.objects.all()
+    response_dct['public'] = settings.ALLOW_FRONTPAGE_POLL
+    if response_dct['public']:
+        response_dct['polls'] = Poll.objects.filter(public=True, category=None)
+        response_dct['categories'] = Category.objects.all()
     error = ''
     if 'bad_poll' in request.GET:
         response_dct['error'] = _("The poll requested don't exist (anymore?)")

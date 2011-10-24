@@ -28,7 +28,7 @@ from django.contrib.admin import widgets as adminwidgets
 from django.utils.translation import gettext_lazy as _
 
 from papillon.polls.models import Poll, Category, Choice, Comment
-from papillon import settings
+from django.conf import settings
 
 class TextareaWidget(forms.Textarea):
     """
@@ -73,6 +73,8 @@ class AdminPollForm(PollForm):
                    'dated_choices', 'type']
         if not Category.objects.all():
             exclude.append('category')
+        if not settings.ALLOW_FRONTPAGE_POLL:
+            exclude.append('public')
     enddate = SplitDateTimeJSField(widget=adminwidgets.AdminSplitDateTime(),
         required=False, label=Poll._meta.get_field('enddate').verbose_name,
                         help_text=Poll._meta.get_field('enddate').help_text)

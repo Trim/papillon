@@ -6,6 +6,7 @@
 <h2><a href='{% url create%}'>{%trans "Create a poll"%}</a></h2>
 <p>{% trans "Create a new sondage for take a decision, find a date for a meeting, etc." %} <a href='create'>{% trans "It's here!" %}</a></p>
 
+{% if public %}
 {% if polls %}<h2>{%trans "Public polls"%}</h2>{%endif%}
 {% for poll in polls %}
 <div class='poll-description'>
@@ -18,5 +19,5 @@
 {% for category in categories %}
 <h3><a href='{% url category category.id%}'>{{category.name}}</a></h3>
 {% endfor %}
-
+{% endif %}
 {% endblock %}
