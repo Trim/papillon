@@ -333,6 +333,8 @@ def poll(request, poll_url):
                 v.save()
     def newComment(request, poll):
         "Comment the poll"
+        if poll.comments.count() >= settings.MAX_COMMENT_NB:
+            return
         if 'comment_author' not in request.POST \
            or not request.POST['comment_author'] \
            or not request.POST['comment']:
@@ -486,4 +488,5 @@ def poll(request, poll_url):
         if 'knowned_vote_' + poll.base_url in request.session:
             response_dct['hide_vote'] = False
     response_dct['form_comment'] = CommentForm()
+    response_dct['max_comment_nb'] = settings.MAX_COMMENT_NB
     return render_to_response('vote.html', response_dct)

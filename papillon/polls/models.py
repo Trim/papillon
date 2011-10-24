@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (C) 2008  Étienne Loks  <etienne.loks_AT_peacefrogsDOTnet>
+# Copyright (C) 2008-2011  Étienne Loks  <etienne.loks_AT_peacefrogsDOTnet>
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as
@@ -138,7 +138,7 @@ the poll/check this option to reopen it"))
 
 class Comment(models.Model):
     '''Comment for a poll'''
-    poll = models.ForeignKey(Poll)
+    poll = models.ForeignKey(Poll, related_name='comments')
     author_name = models.CharField(max_length=100)
     text = models.CharField(max_length=1000)
     date = models.DateTimeField(auto_now_add=True)

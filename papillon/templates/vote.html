@@ -124,10 +124,10 @@
  {%if hide_vote%}<p>{% trans "You have already vote? You are enough wise not to be influenced by other votes? You can display result by clicking" %} <a href='?display_result=1'>{% trans "here" %}</a>.</p>{%else%}
  <p>{% trans "Remain informed of poll evolution:" %} <a href="../../feeds/poll/{{poll.base_url}}">{%trans "syndication"%}</a></p>{%endif%}
  </div>
-{%if not hide_vote%}
-<h3>{%trans "Comments"%}</h3>
+{%if not hide_vote and max_comment_nb %}
+<h3>{%trans "Comments"%} ({% blocktrans %}{{max_comment_nb}} max{% endblocktrans %})</h3>
 <div class='comments'>
- {%if poll.open%}<form method='post' action='.'>
+ {%if poll.open and max_comment_nb > poll.comments.count %}<form method='post' action='.'>
  <table class='comment'>
   <tr>
    <td><label for='comment_author'>{% trans "Author name" %}</label></td>

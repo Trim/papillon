@@ -14,6 +14,7 @@ EXTRA_URL = 'papillon/'
 BASE_SITE = SERVER_URL + EXTRA_URL
 
 TINYMCE_URL = 'http://localhost/tinymce/'
+MAX_COMMENT_NB = 10 # max number of comments by poll - 0 to disable comments
 # time to live in days
 DAYS_TO_LIVE = 30
 

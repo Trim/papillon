@@ -1,5 +1,5 @@
 # Papillon
-# Copyright (C) 2008
+# Copyright (C) 2008-2011
 # This file is distributed under the same license as the papillon package.
 # Étienne Loks <etienne.loks@peacefrogs.net>, 2008.
 #
@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-12-04 23:49+0100\n"
+"POT-Creation-Date: 2011-10-25 00:49+0200\n"
 "PO-Revision-Date: 2008-08-20 00:22+0200\n"
 "Last-Translator: Étienne Loks <etienne.loks@peacefrogs.net>,\n"
 "Language-Team: fr\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -282,8 +283,7 @@ msgstr "Retourner au sondage"
 msgid "Choices"
 msgstr "Choix"
 
-#: templates/editChoicesUser.html:21 templates/vote.html:23
-#: templates/vote.html.py:144
+#: templates/editChoicesUser.html:21 templates/vote.html:144
 msgid "DATETIME_FORMAT"
 msgstr ""
 
@@ -358,6 +358,11 @@ msgstr "syndication"
 msgid "Comments"
 msgstr "Commentaires"
 
+#: templates/vote.html:128
+#, python-format
+msgid "%(max_comment_nb)s max"
+msgstr "%(max_comment_nb)s maximum"
+
 #: templates/vote.html:137
 msgid "Comment"
 msgstr "Commentaire"
@@ -381,4 +386,3 @@ msgid ": %(sum)s vote"
 msgid_plural ": %(sum)s votes"
 msgstr[0] " : %(sum)s vote"
 msgstr[1] " : %(sum)s votes"
-
