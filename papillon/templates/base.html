@@ -2,7 +2,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
- <link rel="stylesheet" href="{{root_url}}static/styles.css" />
+ <link rel="stylesheet" href="{{media_url}}styles.css" />
  <title>{% block title %}Papillon{% endblock %}</title>
  {% block fullscript %}{% endblock %}
 </head>
@@ -13,7 +13,7 @@
 <span id='languages'>{% for language in languages%}<a href='?language={{language.0}}'>{{language.1}}</a>{% endfor %}</span>
 </div>
 <div id="top">
- <h1><a href='{{root_url}}'>Papillon</a></h1>
+ <h1><a href='{% url index %}'>Papillon</a></h1>
 </div>
 <div id="content">
 {% block content %}{% endblock %}

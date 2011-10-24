@@ -26,11 +26,12 @@ import string
 import time
 from datetime import datetime
 
-from django.utils.translation import gettext_lazy as _
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
+from django.conf import settings
+from django.utils.translation import gettext_lazy as _
+from django.core.urlresolvers import reverse
 
-from papillon.settings import LANGUAGES, BASE_SITE
 from papillon.polls.models import Poll, PollUser, Choice, Voter, Vote, \
                                   Category, Comment
 from papillon.polls.forms import CreatePollForm, AdminPollForm, ChoiceForm, \
@@ -40,16 +41,17 @@ def getBaseResponse(request):
     """Manage basic fields for the template
     If not null the second argument returned is a redirection.
     """
-    url = BASE_SITE
     # setting the current language and available languages
     if 'language' in request.GET:
-        if request.GET['language'] in [language[0] for language in LANGUAGES]:
+        if request.GET['language'] in \
+                       [language[0] for language in settings.LANGUAGES]:
             request.session['django_language'] = request.GET['language']
             return None, HttpResponseRedirect(request.path)
     languages = []
-    for language_code, language_label in LANGUAGES:
+    for language_code, language_label in settings.LANGUAGES:
         languages.append((language_code, language_label))
-    return {'root_url':url, 'languages':languages}, None
+    return {'media_url':settings.MEDIA_URL, 'languages':languages,
+            'admin_url':settings.ADMIN_MEDIA_PREFIX,}, None
 
 def index(request):
     "Main page"
@@ -99,8 +101,8 @@ def create(request):
             poll.admin_url = genRandomURL()
             poll.base_url = genRandomURL()
             poll.save()
-            return HttpResponseRedirect('%seditChoicesAdmin/%s/' % (
-                            response_dct['root_url'], poll.admin_url))
+            return HttpResponseRedirect(reverse('edit_choices_admin',
+                                                args=[poll.admin_url]))
     else:
         form = CreatePollForm()
     response_dct['form'] = form
@@ -116,17 +118,15 @@ def edit(request, admin_url):
         poll = Poll.objects.filter(admin_url=admin_url)[0]
     except IndexError:
         # if the poll don't exist redirect to the creation page
-        url = response_dct['root_url']
-        return HttpResponseRedirect('%screate' % (
-                            response_dct['root_url']))
+        return HttpResponseRedirect(reverse('create'))
     Form = AdminPollForm
 
     if request.method == 'POST':
         form = Form(request.POST, instance=poll)
         if form.is_valid():
             poll = form.save()
-            return HttpResponseRedirect('%sedit/%s/' % (
-                            response_dct['root_url'], poll.admin_url))
+            return HttpResponseRedirect(reverse('edit',
+                                        args=[poll.admin_url]))
     else:
         form = Form(instance=poll)
     response_dct['form'] = form
@@ -141,8 +141,7 @@ def editChoicesAdmin(request, admin_url):
         poll = Poll.objects.filter(admin_url=admin_url)[0]
     except IndexError:
         # if the poll don't exist redirect to the main page
-        url = "/".join(request.path.split('/')[:-2])
-        return response_dct, HttpResponseRedirect(url)
+        return HttpResponseRedirect(reverse('index'))
     response_dct['poll'] = poll
     return editChoices(request, response_dct, admin=True)
 
@@ -156,8 +155,7 @@ def editChoicesUser(request, poll_url):
         poll = None
     if not poll or not poll.opened_admin:
         # if the poll don't exist redirect to the main page
-        url = "/".join(request.path.split('/')[:-2])
-        return HttpResponseRedirect(url)
+        return HttpResponseRedirect(reverse('index'))
     response_dct['poll'] = poll
     return editChoices(request, response_dct)
 
@@ -215,7 +213,10 @@ def editChoices(request, response_dct, admin=False):
     if admin and request.method == 'GET':
         for key in request.GET:
             try:
-                current_url = request.path.split('?')[0]
+                current_url = reverse('edit_choices_admin',
+                                      args=[poll.admin_url]) if admin else \
+                              reverse('edit_choices_user',
+                                      args=[poll.poll_url])
                 if 'up_choice' in key:
                     choice = Choice.objects.get(id=int(request.GET[key]))
                     if choice.poll != poll:
@@ -411,9 +412,7 @@ def poll(request, poll_url):
     # if the poll don't exist or if it has no choices the user is
     # redirected to the main page
     if not choices or not poll:
-        url = "/".join(request.path.split('/')[:-3])
-        url += "/?bad_poll=1"
-        return HttpResponseRedirect(url)
+        return HttpResponseRedirect(reverse('index'))
 
     # a vote is submitted
     if 'author_name' in request.POST and poll.open:

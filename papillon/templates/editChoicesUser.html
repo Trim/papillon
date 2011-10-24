@@ -3,14 +3,14 @@
 {% load i18n %}
 
 {% block fullscript %}
-<script type="text/javascript" src="{{root_url}}admin/jsi18n/"></script>
-<script type="text/javascript" src="{{root_url}}media/js/core.js"></script>
-<script type="text/javascript" src="{{root_url}}media/js/admin/RelatedObjectLookups.js"></script>
+<script type="text/javascript" src="{%url admin_i18n%}"></script>
+<script type="text/javascript" src="{{admin_url}}js/core.js"></script>
+<script type="text/javascript" src="{{admin_url}}js/admin/RelatedObjectLookups.js"></script>
 {{ form_new_choice.media }}
 {% endblock %}
 
 {% block content %}
- <p><a href="{{root_url}}poll/{{poll.base_url}}/">{%trans "Return to the poll"%}</a></p>
+ <p><a href="{% url poll poll.base_url %}">{%trans "Return to the poll"%}</a></p>
 <h2>{% trans "Choices" %}</h2>
 {% if choices %}<table class='new_poll'>
   <tr>

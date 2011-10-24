@@ -3,7 +3,7 @@
 
 <h2>{% trans "New choice" %}</h2>
 {%if form_new_choice.errors %} <p class='error'>{{form_new_choice.errors}}</p>{%endif%}
-<form action="{{admin_url}}" method="post">
+<form action="." method="post">
 {{form_new_choice.poll}}
 {{form_new_choice.order}}
 <table class='new_poll'>
