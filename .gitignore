@@ -3,3 +3,4 @@
 *.swp
 *.mo
 papillon/settings.py
+docs/build/*

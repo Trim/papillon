@@ -19,11 +19,11 @@
 
 import time
 
+from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.syndication.feeds import Feed
 from django.utils.translation import gettext_lazy as _
 
-from papillon.settings import BASE_SITE
 from papillon.polls.models import Poll, Vote, Voter
 
 
@@ -39,14 +39,19 @@ class PollLatestEntries(Feed):
     def link(self, obj):
         if not obj:
             raise FeedDoesNotExist
-        return BASE_SITE + "/poll/" + obj.base_url
+        uri = self.request.build_absolute_uri(reverse('poll',
+                                                      args=[obj.base_url]))
+        return uri
 
     def description(self, obj):
         return obj.description
 
     def item_link(self, voter):
-        url = "%s/poll/%s_%d" % (BASE_SITE, voter.poll.base_url,
-                               time.mktime(voter.modification_date.timetuple()))
+        url = reverse('poll',  args=[voter.poll.base_url])
+        url = self.request.build_absolute_uri(reverse('poll',
+                                                    args=[voter.poll.base_url]))
+        url = "%s_%d" % (url[:-1], # dirty...
+                         time.mktime(voter.modification_date.timetuple()))
         return url
 
     def items(self, obj):

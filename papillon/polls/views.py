@@ -133,6 +133,12 @@ def edit(request, admin_url):
         form = Form(instance=poll)
     response_dct['form'] = form
     response_dct['poll'] = poll
+    response_dct['base_url'] = request.build_absolute_uri(reverse('poll',
+                                                        args=[poll.base_url]))
+    response_dct['edit_url'] = request.build_absolute_uri(reverse('edit',
+                                                        args=[poll.admin_url]))
+    response_dct['choices_url'] = request.build_absolute_uri(reverse(
+                                  'edit_choices_admin', args=[poll.admin_url]))
     return render_to_response('edit.html', response_dct)
 
 def editChoicesAdmin(request, admin_url):

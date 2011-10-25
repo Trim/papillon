@@ -9,9 +9,7 @@ TEMPLATE_DEBUG = DEBUG
 import os.path
 PROJECT_PATH = os.path.dirname(os.path.abspath(__file__))
 
-SERVER_URL = 'http://localhost/'
 EXTRA_URL = 'papillon/'
-BASE_SITE = SERVER_URL + EXTRA_URL
 
 TINYMCE_URL = 'http://localhost/tinymce/'
 MAX_COMMENT_NB = 10 # max number of comments by poll - 0 to disable comments
@@ -62,12 +60,14 @@ MEDIA_ROOT = PROJECT_PATH + '/static/'
 
 # URL that handles the media served from MEDIA_ROOT.
 # Example: "http://media.lawrence.com"
-MEDIA_URL = BASE_SITE + 'static/'
+# if you have set an EXTRA_URL set the full path
+MEDIA_URL = '/static/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = BASE_SITE + 'media/'
+# if you have set an EXTRA_URL set the full path
+ADMIN_MEDIA_PREFIX = '/media/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'replace_this_with_something_else'
