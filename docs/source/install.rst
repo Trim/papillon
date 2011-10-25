@@ -112,7 +112,7 @@ If your Papillon is going to be used by many people, it is recommanded to use a 
 In the directory Papillon, put up a symbolic link to the basic styles django (change the path depending on your installation of django)::
 
     $ cd $PAPILLON_PATH
-    $ ln -s /usr/share/python-support/python-django/django/contrib/admin/media/ .
+    $ ln -s  .
 
 
 Database initialisation
@@ -199,7 +199,7 @@ Install mod_wsgi for apache::
 Copy and adapt the apache configuration file for Papillon::
 
     $ cd $INSTALL_PATH
-    $ sudo cp papillon/docs/conf/apache-wsgi.conf /etc/apache2/sites-available/papillon
+    $ sudo cp docs/conf/apache-wsgi.conf /etc/apache2/sites-available/papillon
     $ sudo nano /etc/apache2/sites-available/papillon
 
 Copy and adapt the wsgi configuration file for Papillon::

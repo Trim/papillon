@@ -38,12 +38,12 @@ Get the new sources. Extract the tarball (from the download `directory <http://w
 Copy updated files to your installation (be careful to put trailing slash)::
 
     $ PAPILLON_PATH=/var/local/django/papillon/
-    $ rsync -raP /tmp/papillon/ $PAPILLON_PATH
+    $ sudo rsync -raP /tmp/papillon/ $PAPILLON_PATH
 
 As the Git is now used you can remove (if any) Subversion directory in your new installation::
 
     $ cd $PAPILLON_PATH
-    $ find . -name ".svn" -exec rm -rf {} \;
+    $ sudo find . -name ".svn" -exec rm -rf {} \;
 
 New dependencies
 ****************
@@ -67,6 +67,21 @@ Change the manualy set definition of the project path by the lines::
 
     import os.path
     PROJECT_PATH = os.path.dirname(os.path.abspath(__file__))
+
+Be careful: PROJECT_PATH has no trailing slash. So for every variable
+using PROJECT_PATH don't forget (if necessary) to add a slash.
+
+For instance if you have::
+
+    TEMPLATE_DIRS = (
+        PROJECT_PATH + 'templates',
+    )
+
+Change it to::
+
+    TEMPLATE_DIRS = (
+        PROJECT_PATH + '/templates',
+    )
 
 Migrate to new version of db configuration. The lines::
 
@@ -102,6 +117,19 @@ You have to change MEDIA_URL and ADMIN_MEDIA_PREFIX. If there is no EXTRA_URL an
     ADMIN_MEDIA_PREFIX = '/media/'
 
 Otherwise set the full URL.
+
+Add South to the list of installed applications (before papillon.polls)::
+
+    INSTALLED_APPS = (
+    'django.contrib.auth',
+    'django.contrib.admin',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.markup',
+    'south',
+    'papillon.polls',
+    )
 
 
 Update database
