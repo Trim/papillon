@@ -30,7 +30,7 @@ feeds = {
 }
 
 base = '^' + settings.EXTRA_URL
-if not base.endswith('/'):
+if settings.EXTRA_URL and not base.endswith('/'):
     base += '/'
 
 urlpatterns = patterns('',

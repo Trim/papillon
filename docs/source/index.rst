@@ -13,6 +13,7 @@ Contents:
 
    install
    upgrade
+   database_migration
 
 Indices and tables
 ==================
