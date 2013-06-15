@@ -5,7 +5,7 @@ Papillon installation
 =====================
 
 :Author: Étienne Loks
-:Date: 2011-10-25
+:Date: 2013-06-15
 :Copyright: CC-BY 3.0
 
 This document presents the installation of Papillon on a machine with GNU/Linux.

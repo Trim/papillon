@@ -15,10 +15,3 @@ Contents:
    upgrade
    database_migration
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
