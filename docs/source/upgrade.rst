@@ -27,7 +27,7 @@ Disable your installation in Apache
 Upgrade sources
 ***************
 
-Get the new sources. Extract the tarball (from the download `directory <http://www.peacefrogs.net/download/>`_) or clone the git repository in a temporary directory::
+Get the new sources. Extract the tarball (from the download `directory <http://www.peacefrogs.net/download/papillon/>`_) or clone the git repository in a temporary directory::
 
     cd /tmp/
     git clone git://www.peacefrogs.net/git/papillon

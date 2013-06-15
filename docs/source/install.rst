@@ -54,7 +54,7 @@ Of course you have to create it if it doesn't exist.
 Getting the sources
 -------------------
 
-The last "stable" version is available in this `directory <http://www.peacefrogs.net/download/>`.
+The last "stable" version is available in this `directory <http://www.peacefrogs.net/download/papillon/>`.
 
 Another solution is to get it from the git repository::
 
