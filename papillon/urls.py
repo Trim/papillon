@@ -25,10 +25,6 @@ admin.autodiscover()
 
 from polls.feeds import PollLatestEntries
 
-feeds = {
-    'poll': PollLatestEntries,
-}
-
 base = '^' + settings.EXTRA_URL
 if settings.EXTRA_URL and not base.endswith('/'):
     base += '/'
@@ -37,7 +33,7 @@ urlpatterns = patterns('',
      (base + r'admin/doc/', include('django.contrib.admindocs.urls')),
      url(base + r'admin/jsi18n/$', 'django.views.i18n.javascript_catalog',
              name='admin_i18n'),
-     (base + r'admin/(.*)', admin.site.root),
+     url(base + r'^admin/', include(admin.site.urls)),
      url(base + r'$', 'papillon.polls.views.index', name='index'),
      url(base + r'create/$', 'papillon.polls.views.create', name='create'),
      url(base + r'edit/(?P<admin_url>\w+)/$',
@@ -52,8 +48,7 @@ urlpatterns = patterns('',
             name='poll'),
      url(base + r'poll/(?P<poll_url>\w+)/vote/$', 'papillon.polls.views.poll',
             name='vote'),
-     url(base + r'feeds/(?P<url>.*)$', 'django.contrib.syndication.views.feed',
-            {'feed_dict': feeds}, name='feed'),
+     url(base + r'feeds/poll/(?P<poll_url>\w+)$', PollLatestEntries(), name='feed'),
      (base + r'static/(?P<path>.*)$', 'django.views.static.serve',
                           {'document_root': settings.PROJECT_PATH + '/static'}),
      (base + r'media/(?P<path>.*)$', 'django.views.static.serve',

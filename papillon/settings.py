@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 # Django settings for papillon project.
+# Don't edit this file. Put your changes in local_settings.py
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-import os.path
+import os
 PROJECT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 EXTRA_URL = 'papillon/'
@@ -25,16 +26,14 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'sqlite3',                        # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-            'NAME': PROJECT_PATH + '/papillon.db',   # Or path to database file if using sqlite3.
-            'USER': 'postgres',                     # Not used with sqlite3.
-            'PASSWORD': '',                         # Not used with sqlite3.
-            'HOST': '',                             # Set to empty string for localhost. Not used with sqlite3.
-            'PORT': '',                             # Set to empty string for default. Not used with sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': PROJECT_PATH + '/papillon.db',   # Or path to database file if using sqlite3.
+        'USER': '',                     # Not used with sqlite3.
+        'PASSWORD': '',                         # Not used with sqlite3.
+        'HOST': '',                             # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                             # Set to empty string for default. Not used with sqlite3.
     }
 }
-
-
 
 # Local time zone for this installation. Choices can be found here:
 # http://www.postgresql.org/docs/8.1/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
@@ -67,16 +66,14 @@ MEDIA_URL = '/static/'
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 # if you have set an EXTRA_URL set the full path
-ADMIN_MEDIA_PREFIX = '/media/'
+ADMIN_MEDIA_PREFIX = '/static/admin/'
 
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = 'replace_this_with_something_else'
+SECRET_KEY = ''
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.load_template_source',
-    'django.template.loaders.app_directories.load_template_source',
-#     'django.template.loaders.eggs.load_template_source',
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -116,3 +113,8 @@ LANGUAGES = (
   ('fr', 'Français'),
   ('en', 'English'),
 )
+
+try:
+    from local_settings import *
+except ImportError, e:
+    print 'Unable to load local_settings.py:', e

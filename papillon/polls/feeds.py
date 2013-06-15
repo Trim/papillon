@@ -21,17 +21,19 @@ import time
 
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.syndication.feeds import Feed
+from django.contrib.syndication.views import Feed
 from django.utils.translation import gettext_lazy as _
+from django.utils.safestring import mark_safe
 
 from papillon.polls.models import Poll, Vote, Voter
 
 
 class PollLatestEntries(Feed):
-    def get_object(self, poll_url):
+    def get_object(self, request, poll_url):
+        self.request = request
         if len(poll_url) < 1:
             raise ObjectDoesNotExist
-        return Poll.objects.get(base_url=poll_url[0])
+        return Poll.objects.get(base_url=poll_url)
 
     def title(self, obj):
         return _("Papillon - poll : ") + obj.name
@@ -44,7 +46,7 @@ class PollLatestEntries(Feed):
         return uri
 
     def description(self, obj):
-        return obj.description
+        return mark_safe(obj.description)
 
     def item_link(self, voter):
         url = reverse('poll',  args=[voter.poll.base_url])
@@ -55,6 +57,6 @@ class PollLatestEntries(Feed):
         return url
 
     def items(self, obj):
-        voters = Voter.objects.filter(poll__id=obj.id).\
-order_by('-modification_date')[:10]
+        voters = Voter.objects.filter(poll=obj
+                    ).order_by('-modification_date')[:10]
         return voters
