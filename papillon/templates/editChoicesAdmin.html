@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block fullscript %}
-<script type="text/javascript" src="{%url admin_i18n%}"></script>
+<script type="text/javascript" src="{% url "admin_i18n" %}"></script>
 <script type="text/javascript" src="{{admin_url}}js/core.js"></script>
 <script type="text/javascript" src="{{admin_url}}js/admin/RelatedObjectLookups.js"></script>
 {{ form_new_choice.media }}
