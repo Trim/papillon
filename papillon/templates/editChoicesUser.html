@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block content %}
- <p><a href="{% url poll poll.base_url %}">{%trans "Return to the poll"%}</a></p>
+ <p><a href="{% url "poll" poll.base_url %}">{%trans "Return to the poll"%}</a></p>
 <h2>{% trans "Choices" %}</h2>
 {% if choices %}<table class='new_poll'>
   <tr>

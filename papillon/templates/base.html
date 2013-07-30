@@ -13,7 +13,7 @@
 <span id='languages'>{% for language in languages%}<a href='?language={{language.0}}'>{{language.1}}</a>{% endfor %}</span>
 </div>
 <div id="top">
- <h1><a href='{% url index %}'>Papillon</a></h1>
+ <h1><a href='{% url "index" %}'>Papillon</a></h1>
 </div>
 <div id="content">
 {% block content %}{% endblock %}

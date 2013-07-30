@@ -16,7 +16,7 @@
   <tr>
    <td><label>{% trans "Poll url" %}</label></td>
    <td>
-<a href='{% url poll poll.base_url%}'>{{ base_url }}</a>
+<a href='{% url "poll" poll.base_url%}'>{{ base_url }}</a>
    </td>
    <td class='form_description'><p>
 {% trans "Copy this address and send it to voters who want to participate to this poll" %}
@@ -25,7 +25,7 @@
   <tr>
    <td><label>{% trans "Administration url" %}</label></td>
    <td>
-<a href='{% url edit poll.admin_url %}'>{{ edit_url }}</a>
+<a href='{% url "edit" poll.admin_url %}'>{{ edit_url }}</a>
    </td>
    <td class='form_description'><p>
    {% trans "Address to modify the current poll" %}
@@ -34,7 +34,7 @@
   <tr>
    <td><label>{% trans "Choices administration url" %}</label></td>
    <td>
-<a href='{% url edit_choices_admin poll.admin_url %}'>{{choices_url }}</a>
+<a href='{% url "edit_choices_admin" poll.admin_url %}'>{{choices_url }}</a>
    </td>
    <td class='form_description'><p>
    {% trans "Address to modify choices of the current poll." %}
