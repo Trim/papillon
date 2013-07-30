@@ -19,7 +19,7 @@
 
 import settings
 
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 from django.contrib import admin
 admin.autodiscover()
 
