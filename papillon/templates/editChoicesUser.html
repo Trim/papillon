@@ -12,16 +12,20 @@
 {% block content %}
  <p><a href="{% url 'poll' poll.base_url %}">{%trans "Return to the poll"%}</a></p>
 <h2>{% trans "Choices" %}</h2>
-{% if choices %}<table class='new_poll'>
-  <tr>
-   <th>{% trans "Label" %}</th>
-   <th>{% trans "Limit" %}</th>
-  </tr>
-  {% for choice in choices %}<tr>
-   <td>{%if poll.dated_choices%}{{choice.date|date:_("DATETIME_FORMAT")}}{%else%}{{choice.name}}{%endif%}</td>
-   <td>{% if choice.limit %}{% trans "Limited to"%} {{choice.limit}} {% trans "vote(s)" %}{% endif %}</td>
-  </tr>{% endfor %}
-</table>
+{% if choices %}
+    <div class='new_poll'>
+        <div class='field_label'>{% trans "Current choices" %}</div>
+        <table>
+            <tr>
+            <th>{% trans "Name" %}</th>
+            <th>{% trans "Limit" %}</th>
+            </tr>
+            {% for choice in choices %}<tr>
+            <td>{%if poll.dated_choices%}{{choice.date|date:_("DATETIME_FORMAT")}}{%else%}{{choice.name}}{%endif%}</td>
+            <td>{% if choice.limit %}{% trans "Limited to"%} {{choice.limit}} {% trans "vote(s)" %}{% endif %}</td>
+            </tr>{% endfor %}
+        </table>
+    </div>
 {% endif %}
 {% include 'editChoices.html' %}
 {% endblock %}
