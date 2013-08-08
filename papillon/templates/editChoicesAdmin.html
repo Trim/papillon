@@ -10,36 +10,50 @@
 {% endblock %}
 
 {% block content %}
-{% if not choices %}<p class='error'>
-{% blocktrans %}As long as no options were added to the poll, it will not be available.{% endblocktrans %}
-</p>{% else %}
-<h2>{% trans "Complete/Finalise the poll" %}</h2>
-<p><a href="{% url 'edit' poll.admin_url %}"><button>{% trans "Next"%}</button></a></p>
+{% if not choices %}
+    <p class='error'>
+        {% blocktrans %}As long as no options were added to the poll, it will not be available.{% endblocktrans %}
+    </p>
+{% else %}
+    <h2>{% trans "Choice administration" %}</h2>
+    <p>{% trans "After you've finished to add or edit choices for this poll, click on:" %} <a href="{% url 'edit' poll.admin_url %}"><button>{% trans "Next"%}</button></a></p>
 {% endif %}
+
 {% include 'editChoices.html' %}
+
 {% if choices %}
-<h2>{% trans "Available choices" %}</h2>
-<table class='new_poll'>
-  <tr>
-   {%if not poll.dated_choices%}<th>{% trans "Up/down" %}</th>{%endif%}
-   <th>{% trans "Label" %}</th>
-   <th>{% trans "Limit" %}</th>
-   <th>{% trans "Delete?"%}</th>
-  </tr>
-  {% for choice in choices %}
- <form action="." method="post">
-    {% csrf_token %}
-  {{choice.form.poll}}{{choice.form.order}}<tr>
-   {%if not poll.dated_choices%}<td><a href='?up_choice={{choice.id}}' class='arrow'>+</a>
-   / <a href='?down_choice={{choice.id}}' class='arrow'>-</a></td>{%endif%}
-   <td>{{choice.form.name}}</td>
-   <td>{% trans "Limited to"%} {{choice.form.limit}} {% trans "vote(s)" %}</td>
-   <td><input type='checkbox' name='delete_{{choice.id}}'/></td>
-   <td><input type='hidden' name='edit' value='{{choice.id}}'/></td>
-   <td><input type='submit' value='{% trans "Edit" %}' class='submit'/></td>
-  </tr>
- </form>{% endfor %}
-</table>
+    <div class="new_poll" style="margin-top:20px;">
+        <div class="field_label">{% trans "Edit available choices" %}</div>
+        <div>
+            <table>
+              <tr>
+               {%if not poll.dated_choices%}<th style="word-wrap:none;">{% trans "Position" %}</th>{%endif%}
+               <th>{% trans "Name" %}</th>
+               <th>{% trans "Max votes" %}</th>
+               <th width="60px;">{% trans "Delete?"%} <span class="help_button" title='{% trans "To remove a choice, check this box on the good line and click on Edit."%}'>?</span></th>
+              </tr>
+              {% for choice in choices %}
+             <form action="." method="post">
+                {% csrf_token %}
+                {{choice.form.poll}}{{choice.form.order}}<tr>
+                {%if not poll.dated_choices%}
+                    <td style="font-size:1.5em;">
+                        <a href='?up_choice={{choice.id}}' class='arrow' title='{% trans "Move up" %}'>&uarr;</a>
+                        <br/>
+                        <a style="color:red;" href='?down_choice={{choice.id}}' title='{% trans "Move down" %}' class='arrow'>&darr;</a>
+                        </td>
+                    {%endif%}
+               <td>{{choice.form.name}}</td>
+               <td>{{choice.form.limit}}</td>
+               <td><input type='checkbox' name='delete_{{choice.id}}'/></td>
+               <td><input type='hidden' name='edit' value='{{choice.id}}'/></td>
+               <td><input type='submit' value='{% trans "Edit" %}' class='submit'/></td>
+              </tr>
+             </form>{% endfor %}
+            </table>
+        </div>
+    </div>
+    <div style="clear:both"></div>
 {% endif %}
 
 {% endblock %}
