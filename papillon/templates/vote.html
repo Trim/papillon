@@ -10,140 +10,205 @@
 {% endblock %}
 
 {% block content %}
- <h2>{%if poll.category %}{{poll.category.name}} - {%endif%}{{poll.name}}</h2>
-{% if error %}<p class='alert'>{{ error }}</p>{% endif %}
-{% if not poll.open %}<p class='alert'>{% trans "The current poll is closed."%}</p>{% endif %}
- <p>{{ poll.description|safe }}</p>
- <form method='post' action='.'>
-     {% csrf_token %}
- <div id='poll_table'>
- <table id='poll'>
- <tr>
-  <td class='simple'></td>
-  <td class='simple'></td>
-  {% for choice in choices %}<th>{%if poll.dated_choices%}{{choice.date|date:"D d M Y H:i"}}{%else%}{{choice.name}}{%endif%}{% if choice.limit %} ({% trans "max" %} {{choice.limit}}){%endif%}</th>
- {% endfor %}</tr>
- {% if not hide_vote %}
- {% for voter in voters %}<tr{% if voter.highlight %} class='highlighted_voter'{% endif %}>
-{% ifequal current_voter_id voter.id %}
- <input type='hidden' name='voter' value='{{voter.id}}'/>
- <td class='simple'></td>
- <td><input type='text' name='author_name' value='{{voter.user.name}}'/></td>
- {% for vote in voter.votes %}<td>
-  {% if vote.choice.available or vote.value %}
-   {% ifequal poll.type 'P' %}
-    <input type='checkbox' name='vote_{{vote.id}}'{%ifequal vote.value 1%} checked='checked'{%endifequal%}/>
-   {% endifequal %}
-   {% ifequal poll.type 'O' %}
-    <input type='radio' name='vote' value='{{vote.id}}' {%ifequal vote.value 1%} checked='checked'{%endifequal%}/>
-   {% endifequal %}
-   {% ifequal poll.type 'B' %}
-    <select name='vote_{{vote.id}}'>
-    {% for vote_choice in VOTE %}
-     <option value='{{vote_choice.0}}'{%ifequal vote.value vote_choice.0%} selected='selected'{%endifequal%}>{{vote_choice.1.1}}</option>
-    {% endfor %}
-    </select>
-   {% endifequal %}
-   {% ifequal poll.type 'V' %}
-    <select name='vote_{{vote.id}}'>
-     {% for vote_choice in 10|get_range %}
-      <option value='{{vote_choice}}'{%ifequal vote.value vote_choice%} selected='selected'{%endifequal%}>{{vote_choice}}</option>
-     {% endfor %}
-    </select>
-   {% endifequal %}
-  {% else %}
-   {% trans "Limit reached" %}
-  {% endif %}
- </td>
- {%endfor%}
-{%else%}
- <td class='simple'>{% if poll.open %}<a href='?voter={{voter.id}}'>{% trans "Edit" %}</a>{%else%}&nbsp;{%endif%}</td>
- <td>{{voter.user.name}}</td>
- {% for vote in voter.votes %}
-  {% ifequal poll.type 'V' %}
-   <td class='{%ifequal vote.value 9%}OK{%else%}{%ifequal vote.value 0%}KO{%else%}OKO{%endifequal%}{%endifequal%}'>
-   {%if vote.value%}{{vote.value}}{%else%}0{%endif%}</td>
-  {% else %}
-   <td class='{%ifequal vote.value 1%}OK{%else%}{%ifequal vote.value 0%}OKO{%else%}KO{%endifequal%}{%endifequal%}'>
-   {%ifequal poll.type 'B'%}
-   {%for VOT in VOTE%}
-   {%ifequal VOT.0 vote.value%}{{VOT.1.1}}{%endifequal%}{%endfor%}
-   {%else%}
-   {%for VOT in VOTE%}
-   {%ifequal VOT.0 vote.value%}{{VOT.1.0}}{%endifequal%}{%endfor%}
-   {%endifequal%}
-   </td>
-  {% endifequal %}
-  {%endfor%}
-  {%endifequal%}
- </tr>{%endfor%}
- {%endif%}
- {%if not current_voter_id%}{% if poll.open %}
- <tr>
-  <td class='simple'></td>
-  <td><input type='text' name='author_name'/></td>
-  {%for choice in choices%}<td>
-  {% if choice.available %}
-  {% ifequal poll.type 'P' %}
-  <input type='checkbox' name='choice_{{choice.id}}'/>{% endifequal %}
-  {% ifequal poll.type 'O' %}
-  <input type='radio' name='choice' value='{{choice.id}}'/>{% endifequal %}
-  {% ifequal poll.type 'B' %}
-  <select name='choice_{{choice.id}}'>{% for vote_choice in VOTE %}
-    <option value='{{vote_choice.0}}'{%ifequal vote_choice.0 0%} selected='selected'{%endifequal%}>{{vote_choice.1.1}}</option>{% endfor %}
-  </select>
-  {% endifequal %}
-  {% ifequal poll.type 'V' %}
-  <select name='choice_{{choice.id}}'>
-    {% for vote_choice in 10|get_range %}
-    <option value='{{vote_choice}}'>{{vote_choice}}</option>
-    {% endfor %}
-  </select>
-  {% endifequal %}
-  {% else %}
-  {% trans "Limit reached" %}
-  {% endif %}
-  </td>{%endfor%}
- </tr>
- {%endif%}{%endif%}
- {% if not hide_vote %}<tr id='sum'>
-  <td class='simple'></td><th>{% trans "Sum" %}</th>
-  {% for choice in choices %}<td{%if choice.highlight %} class='highlight'{%endif%}>{{choice.getSum}}</td>
-  {% endfor %}
- </tr>{%endif%}
- {% if poll.open %}
- <td class='simple'></td>
- <td class='simple'><input type='submit' value='{%if current_voter_id%}{% trans "Edit" %}{%else%}{% trans "Participate" %}{%endif%}' class='submit'/></td>
- {% endif %}
- </table>
- </div>
- <hr class='spacer'/>
- </form>
- {%if poll.opened_admin%}
- <p><a href="{% url 'edit_choices_user' poll.base_url %}">{%trans "Add a new choice to this poll?"%}</a></p>{%endif%}
- <div class='footnote'>
- {%if hide_vote%}<p>{% trans "You have already vote? You are enough wise not to be influenced by other votes? You can display result by clicking" %} <a href='?display_result=1'>{% trans "here" %}</a>.</p>{%else%}
- <p>{% trans "Remain informed of poll evolution:" %} <a href="../../feeds/poll/{{poll.base_url}}">{%trans "syndication"%}</a></p>{%endif%}
- </div>
-{%if not hide_vote and max_comment_nb %}
-<h3>{%trans "Comments"%} ({% blocktrans %}{{max_comment_nb}} max{% endblocktrans %})</h3>
-<div class='comments'>
- {%if poll.open and max_comment_nb > poll.comments.count %}<form method='post' action='.'>
- <table class='comment'>
-  <tr>
-   <td><label for='comment_author'>{% trans "Author name" %}</label></td>
-   <td><input type='text' id='comment_author' name='comment_author'/></td>
-  </tr>
-  <tr>
-   <td><label for='comment'>{% trans "Comment"%}</label></td>
-   <td><textarea id='comment' name='comment' cols='' rows=''></textarea></td>
-  </tr>
-  <tr><td colspan='2' id='tdsubmit'><input type='submit' class='submit' value='{% trans "Send" %}'/></td></tr>
- </table>
-</form>{%endif%}
- <ul>{%for comment in comments%}
-  <li><p class='author'>{{comment.author_name}}, {{comment.date|date:_("DATETIME_FORMAT")}} :</p>
-  {{comment.text|safe}}</li>{%endfor%}
- </ul>
-</div>{%endif%}
+    <h2>{%if poll.category %}{{poll.category.name}} - {%endif%}{{poll.name}}</h2>
+    {% if error %}<p class='alert'>{{ error }}</p>{% endif %}
+    {% if not poll.open %}<p class='alert'>{% trans "The current poll is closed."%}</p>{% endif %}
+    
+    <h3>{% trans "Description" %}</h3>
+    <p>{{ poll.description|safe }}</p>
+    
+    <h3>{% trans "Participation" %}</h3>
+    <form method='post' action='.'>
+        {% csrf_token %}
+        <div id='poll_table'>
+            <table id='poll'>
+                <tr>
+                    <td class='simple'></td>
+                    <td class='simple'></td>
+                    {% for choice in choices %}
+                        <th>
+                            {%if poll.dated_choices%}
+                                {{choice.date|date:"D d M Y H:i"}}
+                            {%else%}
+                                {{choice.name}}
+                            {%endif%}
+                            {% if choice.limit %}
+                                ({% trans "max" %} {{choice.limit}})
+                            {%endif%}
+                        </th>
+                    {% endfor %}
+                </tr>
+                <!-- Show voter and vote lines if votes aren't hidden -->
+                {% if not hide_vote %}
+                    {% for voter in voters %}
+                        <tr{% if voter.highlight %} class='highlighted_voter'{% endif %}>
+                            {% ifequal current_voter_id voter.id %}
+                                <input type='hidden' name='voter' value='{{voter.id}}'/>
+                                <td class='simple'></td>
+                                <td><input type='text' name='author_name' value='{{voter.user.name}}'/></td>
+                                {% for vote in voter.votes %}
+                                    <td>
+                                        {% if vote.choice.available or vote.value %}
+                                            {% ifequal poll.type 'P' %}
+                                                <input type='checkbox' name='vote_{{vote.id}}'{%ifequal vote.value 1%} checked='checked'{%endifequal%}/>
+                                            {% endifequal %}
+                                            {% ifequal poll.type 'O' %}
+                                                <input type='radio' name='vote' value='{{vote.id}}' {%ifequal vote.value 1%} checked='checked'{%endifequal%}/>
+                                            {% endifequal %}
+                                            {% ifequal poll.type 'B' %}
+                                                <select name='vote_{{vote.id}}'>
+                                                    {% for vote_choice in VOTE %}
+                                                        <option value='{{vote_choice.0}}'{%ifequal vote.value vote_choice.0%} selected='selected'{%endifequal%}>{{vote_choice.1.1}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            {% endifequal %}
+                                            {% ifequal poll.type 'V' %}
+                                                <select name='vote_{{vote.id}}'>
+                                                    {% for vote_choice in 10|get_range %}
+                                                        <option value='{{vote_choice}}'{%ifequal vote.value vote_choice%} selected='selected'{%endifequal%}>{{vote_choice}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            {% endifequal %}
+                                        {% else %}
+                                            {% trans "Limit reached" %}
+                                        {% endif %}
+                                    </td>
+                                {%endfor%}
+                            {%else%}
+                                <td class='simple'>{% if poll.open %}<a href='?voter={{voter.id}}'>{% trans "Edit" %}</a>{%else%}&nbsp;{%endif%}</td>
+                                <td>{{voter.user.name}}</td>
+                                {% for vote in voter.votes %}
+                                    {% ifequal poll.type 'V' %}
+                                        <td class='{%ifequal vote.value 9%}OK{%else%}{%ifequal vote.value 0%}KO{%else%}OKO{%endifequal%}{%endifequal%}'>
+                                            {%if vote.value%}{{vote.value}}{%else%}0{%endif%}
+                                        </td>
+                                    {% else %}
+                                        <td class='{%ifequal vote.value 1%}OK{%else%}{%ifequal vote.value 0%}OKO{%else%}KO{%endifequal%}{%endifequal%}'>
+                                            {%ifequal poll.type 'B'%}
+                                                {%for VOT in VOTE%}
+                                                    {%ifequal VOT.0 vote.value%}
+                                                        {{VOT.1.1}}
+                                                    {%endifequal%}
+                                                {%endfor%}
+                                            {%else%}
+                                                {%for VOT in VOTE%}
+                                                    {%ifequal VOT.0 vote.value%}
+                                                        {{VOT.1.0}}
+                                                    {%endifequal%}
+                                                {%endfor%}
+                                            {%endifequal%}
+                                        </td>
+                                    {% endifequal %}
+                                {%endfor%}
+                            {%endifequal%}
+                        </tr>
+                    {%endfor%} <!-- End for loop on voters-->
+                {%endif%} <!-- End if hide vote-->
+                
+                <!-- Show line to add a new voter and votes -->
+                {%if not current_voter_id%}
+                    {% if poll.open %}
+                        <tr>
+                            <td class='simple'></td>
+                            <td><input type='text' name='author_name'/></td>
+                            {%for choice in choices%}
+                                <td>
+                                    {% if choice.available %}
+                                        {% ifequal poll.type 'P' %}
+                                            <input type='checkbox' name='choice_{{choice.id}}'/>
+                                        {% endifequal %}
+                                        {% ifequal poll.type 'O' %}
+                                            <input type='radio' name='choice' value='{{choice.id}}'/>
+                                        {% endifequal %}
+                                        {% ifequal poll.type 'B' %}
+                                            <select name='choice_{{choice.id}}'>
+                                                {% for vote_choice in VOTE %}
+                                                    <option value='{{vote_choice.0}}'{%ifequal vote_choice.0 0%} selected='selected'{%endifequal%}>{{vote_choice.1.1}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        {% endifequal %}
+                                        {% ifequal poll.type 'V' %}
+                                            <select name='choice_{{choice.id}}'>
+                                                {% for vote_choice in 10|get_range %}
+                                                    <option value='{{vote_choice}}'>{{vote_choice}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        {% endifequal %}
+                                    {% else %}
+                                        {% trans "Limit reached" %}
+                                    {% endif %}
+                                </td>
+                            {%endfor%}
+                        </tr>
+                    {%endif%}<!-- End if poll.open -->
+                {%endif%}<!-- End if not current_voter_id -->
+                
+                <!-- Show total line if votes aren't hidden -->
+                {% if not hide_vote %}
+                    <tr id='sum'>
+                        <td class='simple'></td>
+                        <th>{% trans "Sum" %}</th>
+                            {% for choice in choices %}
+                                <td{%if choice.highlight %} class='highlight'{%endif%}>{{choice.getSum}}</td>
+                            {% endfor %}
+                    </tr>
+                {%endif%}
+                
+                <!-- Show button to edit/participate-->
+                {% if poll.open %}
+                    <tr>
+                        <td class='simple'></td>
+                        <td class='simple'>
+                            <input type='submit' value='{%if current_voter_id%}{% trans "Edit" %}{%else%}{% trans "Participate" %}{%endif%}' class='submit'/>
+                        </td>
+                    </tr>
+                {% endif %}
+            </table> <!-- End poll table -->
+        </div><!-- End poll_table div -->
+        <hr class='spacer'/>
+    </form>
+
+    {%if poll.opened_admin%}
+        <p><a href="{% url 'edit_choices_user' poll.base_url %}">{%trans "Add a new choice to this poll?"%}</a></p>
+    {%endif%}
+    
+    <div class='footnote'>
+        {%if hide_vote%}
+            <p>
+                {% trans "You have already vote? You are enough wise not to be influenced by other votes? You can display result by clicking" %}
+                <a href='?display_result=1'>{% trans "here" %}</a>.
+            </p>
+        {%else%}
+            <p>
+                {% trans "Remain informed of poll evolution:" %}
+                <a href="../../feeds/poll/{{poll.base_url}}">{%trans "RSS syndication"%}</a>
+            </p>
+        {%endif%}
+    </div>
+    
+    {%if not hide_vote and max_comment_nb %}
+        <h3>{%trans "Comments"%} ({% blocktrans %}{{max_comment_nb}} max{% endblocktrans %})</h3>
+        <ul class='comments'>
+            {%for comment in comments%}
+                <li>
+                    <p class='author'>{{comment.author_name}}, {{comment.date|date:_("DATETIME_FORMAT")}} :</p>
+                    {{comment.text|safe}}
+                </li>
+            {%endfor%}
+        </ul>
+        {%if poll.open and max_comment_nb > poll.comments.count %}
+            <form class="new_poll" method='post' action='.'>
+                <div class="field_label">{% trans "Add a comment"%}</div>
+                <div class="field_label">
+                    <label for='comment_author'>{% trans "Author name" %}</label>
+                </div>
+                <input type='text' id='comment_author' name='comment_author'/>
+                <div class="field_label">
+                    <label for='comment'>{% trans "Comment"%}</label>
+                </div>
+                <textarea id='comment' name='comment' cols='' rows=''></textarea>
+                <input type='submit' class='submit' value='{% trans "Send" %}'/>
+            </form>
+        {%endif%}
+    {%endif%}
 {% endblock %}
