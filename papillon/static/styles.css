@@ -17,6 +17,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 See the file COPYING for details.
 */
 
+@media only screen and (max-width: 600px){
+    #main{
+        width:100% !important;
+        background:white !important;
+        border:0px !important;
+    }
+    
+    .new_poll{
+        width:100% !important;
+    }
+    .new_poll *{
+        padding:0 !important;
+        margin:0!important;
+    }
+}
+
 /* colors */
 
 body, #poll th, .highlight{
@@ -123,10 +139,11 @@ border:0;
 #main{
 background-color:white;
 border:1px solid;
-margin:20px;
+margin:auto;
 background-image: url(bg.jpg);
 background-repeat:no-repeat;
 background-position:95% 10%;
+width: 80%;
 }
 
 #header{
@@ -158,10 +175,43 @@ color:blue;
 }
 
 .new_poll{
-width:600px;
+    width:200px;
+    margin:auto;
+    padding:0;
 }
 
-.new_poll input{
+.help_button{
+    float:right;
+    color:white;
+    background:green;
+    width:15px;
+    height:15px;
+    border-radius:25px;
+    text-align:center;
+}
+
+.new_poll .field_label{
+    clear:both;
+    font-size:1.5em;
+    width:100%;
+    float:none;
+    margin-top:10px;
+}
+
+.new_poll div, .new_poll input, .new_poll textarea{
+    width:100%;
+}
+
+.new_poll div {
+    float:left;
+}
+
+.errorlist{
+    color:red;
+    background-color:rgb(255,200,200);
+}
+
+/*.new_poll input{
 width:160px;
 }
 
@@ -176,7 +226,7 @@ width:20px;
 .new_poll textarea{
 width:160px;
 height:100px;
-}
+}*/
 
 .datetime a img{
 border:0;
