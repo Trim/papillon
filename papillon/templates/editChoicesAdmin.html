@@ -28,6 +28,7 @@
   </tr>
   {% for choice in choices %}
  <form action="." method="post">
+    {% csrf_token %}
   {{choice.form.poll}}{{choice.form.order}}<tr>
    {%if not poll.dated_choices%}<td><a href='?up_choice={{choice.id}}' class='arrow'>+</a>
    / <a href='?down_choice={{choice.id}}' class='arrow'>-</a></td>{%endif%}

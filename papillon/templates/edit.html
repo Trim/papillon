@@ -12,6 +12,7 @@
 {% block content %}
  <h2>{% trans "Edit poll" %}</h2>
 <form action="." method="post">
+    {% csrf_token %}
 <table class='new_poll'>
   <tr>
    <td><label>{% trans "Poll url" %}</label></td>

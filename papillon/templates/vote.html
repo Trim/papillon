@@ -15,6 +15,7 @@
 {% if not poll.open %}<p class='alert'>{% trans "The current poll is closed."%}</p>{% endif %}
  <p>{{ poll.description|safe }}</p>
  <form method='post' action='.'>
+     {% csrf_token %}
  <div id='poll_table'>
  <table id='poll'>
  <tr>
