@@ -1,20 +1,19 @@
 {% load markup %}
 {% load i18n %}
 
-<h2>{% trans "New choice" %}</h2>
 {%if form_new_choice.errors %} <p class='error'>{{form_new_choice.errors}}</p>{%endif%}
-<form action="." method="post">
+<form class='new_poll' action="." method="post">
     {% csrf_token %}
-{{form_new_choice.poll}}
-{{form_new_choice.order}}
-<table class='new_poll'>
- <tr>
-  <td class='form_description' colspan='3'><p>{% trans "Setting a new choice. Optionally you can set a limit of vote for this choice. This limit is usefull for limited resources allocation." %}</p></td>
- </tr>
- <tr>
-  <td>{{form_new_choice.name}}</td>
-  <td>{%trans "Limited to"%} {{form_new_choice.limit}} {%trans "vote(s)"%}</td>
-  <td><input type='hidden' name='add' value='1'/> <input type='submit' value='{% trans "Add" %}' class='submit'/></td>
- </tr>
-</table>
+    <div class="field_label">
+        {% trans "Add new choice" %} <span class="help_button" title='{% trans "Setting a new choice. Optionally you can set a limit of vote for this choice. This limit is usefull for limited resources allocation." %}'>?</span>
+    </div>
+    {{form_new_choice.poll}}
+    {{form_new_choice.order}}
+
+    {%trans "Choice name:"%}<br/>
+    {{form_new_choice.name}}
+    {%trans "Max number of votes (optional):"%}<br/>
+    {{form_new_choice.limit}}<br/>
+    <input type='hidden' name='add' value='1'/>
+    <input type='submit' value='{% trans "Add" %}' class='submit'/>
 </form>
