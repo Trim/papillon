@@ -190,43 +190,32 @@ color:blue;
     text-align:center;
 }
 
-.new_poll .field_label{
+.field_label{
     clear:both;
     font-size:1.5em;
     width:100%;
-    float:none;
+    float:none !important;
     margin-top:10px;
 }
 
-.new_poll div, .new_poll input, .new_poll textarea{
+.new_poll table form tr {
+    margin:5px 0px !important;
+    padding:0px;
+}
+
+.new_poll div, .new_poll input, .new_poll textarea, .new_poll table{
     width:100%;
+    margin:5px 0px;
 }
 
 .new_poll div {
     float:left;
 }
 
-.errorlist{
+.errorlist, .error{
     color:red;
     background-color:rgb(255,200,200);
 }
-
-/*.new_poll input{
-width:160px;
-}
-
-.new_poll .submit{
-width:auto;
-}
-
-.new_poll input.limit{
-width:20px;
-}
-
-.new_poll textarea{
-width:160px;
-height:100px;
-}*/
 
 .datetime a img{
 border:0;
