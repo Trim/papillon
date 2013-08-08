@@ -11,48 +11,49 @@
 
 {% block content %}
  <h2>{% trans "Edit poll" %}</h2>
-<form action="." method="post">
+<form class='new_poll' action="." method="post">
     {% csrf_token %}
-<table class='new_poll'>
-  <tr>
-   <td><label>{% trans "Poll url" %}</label></td>
-   <td>
-<a href="{% url 'poll' poll.base_url %}">{{ base_url }}</a>
-   </td>
-   <td class='form_description'><p>
-{% trans "Copy this address and send it to voters who want to participate to this poll" %}
-   </p></td>
-  </tr>
-  <tr>
-   <td><label>{% trans "Administration url" %}</label></td>
-   <td>
-<a href="{% url 'edit' poll.admin_url %}">{{ edit_url }}</a>
-   </td>
-   <td class='form_description'><p>
-   {% trans "Address to modify the current poll" %}
-   </p></td>
-  </tr>
-  <tr>
-   <td><label>{% trans "Choices administration url" %}</label></td>
-   <td>
-<a href="{% url 'edit_choices_admin' poll.admin_url %}">{{choices_url }}</a>
-   </td>
-   <td class='form_description'><p>
-   {% trans "Address to modify choices of the current poll." %}
-   </p></td>
-  </tr>
-  {% for field in form %}
-  {% if field.is_hidden %}
-  {{field}}
-  {% else %}
-  <tr><td colspan='3'>{{field.errors}}</td></tr>
-  <tr>
-   <td>{{field.label_tag}}</td>
-   <td>{{field}}</td>
-   {% if field.help_text %}<td class='form_description'>{{field.help_text|markdown}}</td>{%endif%}
-  </tr>
-  {% endif %}
-  {% endfor %}
+    
+    <div class="field_label">
+        <label id="">{% trans "Poll url" %}</label>
+        <span class="help_button" title='{% trans "Copy this address and send it to voters who want to participate to this poll" %}'>?</span>
+    </div>
+    <input type="text" readonly value='{{ base_url }}'>
+
+    <div class="field_label">
+        <label id="">{% trans "Administration url" %}</label>
+        <span class="help_button" title='{% trans "Address to modify the current poll" %}'>?</span>
+    </div>
+    <input type="text" readonly value='{{ edit_url }}'>
+   
+    <div class="field_label">
+        <label id="">{% trans "Choices administration url" %}</label>
+        <span class="help_button" title='{% trans "Address to modify choices of the current poll." %}'>?</span>
+    </div>
+    <input type="text" readonly value='{{choices_url }}'>
+    
+    {% for field in form %}
+          {% if field.is_hidden %}
+            {{field}}
+          {% else %}
+              
+            <div class="field_label">
+                {{field.label_tag}}
+                <span class="help_button" title="{{field.help_text}}">?</span>
+            </div>
+            <div class="field_errors">
+                {% if field.errors %}
+                    Error(s) :
+                    <ol class="errorlist">
+                    {% for error in field.errors %}
+                        <li>{{ error|escape }}</li>
+                    {% endfor %}
+                    </ol>
+                {% endif %}
+            </div>
+            {{field}}
+          {% endif %}
+    {% endfor %}
   <tr>
    <td></td>
    <td><input type='submit' value='{% trans "Edit" %}' class='submit'/></td>
