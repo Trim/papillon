@@ -8,26 +8,32 @@
 
 
 {% block content %}
- <h2>{% trans "New poll" %}</h2>
-<form action="." method="post">
-<table class='new_poll'>
-  {% for field in form %}
-  {% if field.is_hidden %}
-  {{field}}
-  {% else %}
-  <tr><td colspan='3'>{{field.errors}}</td></tr>
-  <tr>
-   <td>{{field.label_tag}}</td>
-   <td>{{field}}</td>
-   <td class='form_description'>{{field.help_text|markdown}}</td>
-  </tr>
-  {% endif %}
-  {% endfor %}
-  <tr>
-   <td></td>
-   <td><input type='submit' value='{% trans "Create" %}' class='submit'/></td>
-  </tr>
-</table>
+<h2>{% trans "New poll" %}</h2>
+
+<form class="new_poll" action="." method="post">
+    {% csrf_token %}
+    {% for field in form %}
+        {% if field.is_hidden %}
+            {{field}}
+        {% else %}
+            <div class="field_label">
+                {{field.label_tag}}
+                <span class="help_button" title="{{field.help_text}}">?</span>
+            </div>
+            <div class="field_errors">
+                {% if field.errors %}
+                    Error(s) :
+                    <ol class="errorlist">
+                    {% for error in field.errors %}
+                        <li>{{ error|escape }}</li>
+                    {% endfor %}
+                    </ol>
+                {% endif %}
+            </div>
+            {{field}}
+        {% endif %}
+    {% endfor %}
+    <input style="clear:both;margin:auto;float:none;width:100%;" type='submit' value='{% trans "Create" %}' class='submit'/>
 </form>
 
 {% endblock %}
